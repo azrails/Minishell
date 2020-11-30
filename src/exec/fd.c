@@ -30,6 +30,8 @@ void	resetfds(t_config *cnf)
 {
 	dup2(cnf->savein, cnf->in);
 	dup2(cnf->saveout, cnf->out);
+	closefd(cnf->savein);
+	closefd(cnf->saveout);
 	cnf->pipein = -1;
 	cnf->pipeout = -1;
 }

@@ -28,6 +28,7 @@ static	char	**argtomatrix(t_tok *pnt, t_config *cnf)
 	while (tmp && i < j + 1)
 	{
 		args[i] = getstr(tmp, cnf->envl);
+		//printf("YEP %s\n\n",args[i]);
 		i++;
 		tmp = tmp->next;
 	}

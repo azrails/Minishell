@@ -58,7 +58,7 @@ void	pars(t_config *cnf)
 	t_tok *ptf;
 	t_arg *tmp;
 	ptf = cnf->tok;
-	while (ptf)
+	/*while (ptf)
 	{
 		printf("type rdir %d , func %s , path rdir %s \n",ptf->rdir, ptf->func, ptf->prdir);
 		tmp = ptf->arg;
@@ -68,7 +68,7 @@ void	pars(t_config *cnf)
 			tmp  = tmp->next;
 		}
 		ptf = ptf->next; 
-	}
+	}*/
 }
 
 int		main(int argc, char **argv, char **env)

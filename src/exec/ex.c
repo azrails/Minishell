@@ -28,7 +28,7 @@ static	int		countenv(t_env *env, char *s, int i)
 			break;
 		j++;
 	}
-	tmp = malloc(sizeof(char) * (j - i));
+	tmp = malloc(sizeof(char) * (j - i) + 1);
 	while (i < j)
 	{
 		tmp[c] = s[i];
@@ -128,7 +128,7 @@ char	*getstr(t_arg *arg, t_env *env)
 	{
 		if (((arg->sarg[i] != '$') || (i != 0 && arg->sarg[i] == '$' && arg->sarg[i - 1] == '\\')) || arg->quote == 1)
 			ret[j] = arg->sarg[i];
-		else if (arg->sarg[i] == '$' && arg->quote == 2)
+		else if ((arg->sarg[i] == '$' && arg->quote == 2) || (arg->sarg[i] == '$' && arg->quote == 0))
 		{
 			j = ptenv(arg->sarg, env, ++i, ret, j);
 			while (arg->sarg[i] && arg->sarg[i] != ' ')
