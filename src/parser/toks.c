@@ -82,6 +82,8 @@ static	t_arg	*getarg(char *line, int *i)
 	arglen = 0;
 	if (!(arg = malloc(sizeof(t_arg))))
 		return (NULL);
+	arg->next = NULL;
+	arg->prev = NULL;
 	*i = argqt(arg, line, *i);
 	eq = arg->quote;
 	if (eq != 0)
@@ -98,7 +100,6 @@ static	t_arg	*getarg(char *line, int *i)
 		arglen++;
 		j++;
 	}
-	printf("arglen %d %d %d",*i,j, arglen);
 	if (!(arg->sarg = malloc(sizeof(char) * arglen + 1)))
 		return (NULL);
 	arglen = 0;
@@ -149,6 +150,10 @@ static	t_tok	*newtok(char *line, int *i)
 
 	if (!(tok = malloc(sizeof(t_tok))))
 		return(NULL);
+	tok->rdir = 0;
+	tok->arg = NULL;
+	tok->next = NULL;
+	tok->prdir = NULL;
 	if ((*i = funcname(line, *i, tok)) < 0)
 		return (NULL);
 	while (line[*i])

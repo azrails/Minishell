@@ -26,7 +26,7 @@ static	int		prdir(t_tok *tok, char  *line, int i)
 	int oq;
 
 	count = 0;
-	oq = 1;
+	oq = 0;
 	i = ft_skipspace(line, i);
 	j = i;
 	while (line[j]) // переработать возможно сделать одну проверку для этого цикла и цикла ниже и для funcname
@@ -39,7 +39,7 @@ static	int		prdir(t_tok *tok, char  *line, int i)
 			oq = 0;
 		if (line[j] == '\"' && oq == 2)
 			oq = 0;
-		if (oq == 0 && (line[j] == ' ' || line[j] == '|' || line[j] == ';'))
+		if ((oq == 0 && line[j] == ' ') || (oq == 0  && line[j] == '|' ) || (oq == 0 && line[j] == ';'))
 			break;
 		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
 			count--;

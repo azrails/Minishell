@@ -44,25 +44,30 @@ void	pars(t_config *cnf)
 	ft_putstr_fd("\e[1;38;5;47mminishell:\e[0m ", 2);
 	if(get_next_line(0 ,&line) < 0)/////ctrl-d == eof => когда из гнл приходит 0 надо выходить из шела
 	{
-		ft_putstr_fd("\e[1;38;5;202merror: read line try again\e[0m\n", 1);
+		ft_putstr_fd("\e[1;38;5;202merror: read line try again\e[0m\n", 2);
 		return ;
 	}
 	if(close_quote(line))
 	{
-		ft_putstr_fd("\e[1;38;5;202msyntax error: not close quote\e[0m\n", 1);
+		ft_putstr_fd("\e[1;38;5;202msyntax error: not close quote\e[0m\n", 2);
 		free(line);
 		return ;
 	}
 	cnf->tok = analys(line);
-	while (cnf->tok)
+
+	t_tok *ptf;
+	t_arg *tmp;
+	ptf = cnf->tok;
+	while (ptf)
 	{
-		printf("type rdir %d , func %s , path rdir %s \n",cnf->tok->rdir, cnf->tok->func, cnf->tok->prdir);
-		while (cnf->tok->arg)
+		printf("type rdir %d , func %s , path rdir %s \n",ptf->rdir, ptf->func, ptf->prdir);
+		tmp = ptf->arg;
+		while (tmp)
 		{
-			printf("type quote %d , args %s\n",cnf->tok->arg->quote, cnf->tok->arg->sarg);
-			cnf->tok->arg = cnf->tok->arg->next;
+			printf("type quote %d , args %s\n\n",tmp->quote, tmp->sarg);
+			tmp  = tmp->next;
 		}
-		cnf->tok = cnf->tok->next; 
+		ptf = ptf->next; 
 	}
 }
 
@@ -71,12 +76,18 @@ int		main(int argc, char **argv, char **env)
 	t_config cnf;
 
 	cnf.exit = 1;
+	cnf.in = 0;
+	cnf.out = 1;
+	init(&cnf, env);
 	while(cnf.exit)
 	{
 		cnf.sig.ctc = 0;
 		cnf.sig.ctd = 0;
 		cnf.sig.cts = 0;
+		cnf.tok = NULL;
 		pars(&cnf);
+		if (cnf.tok != NULL)
+			exec(&cnf);
 	}
 	return (0);
 }

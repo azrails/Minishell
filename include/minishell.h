@@ -16,6 +16,12 @@
 #include <stdio.h>//////delete
 
 # include <signal.h>
+# include <fcntl.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <dirent.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 # include "../libft/libft.h"
 
 typedef	struct s_arg
@@ -25,6 +31,14 @@ typedef	struct s_arg
 	struct	s_arg	*next;
 	struct	s_arg	*prev;
 }				t_arg;
+
+typedef	struct s_env
+{
+	char		*key;
+	char		*value;
+	struct  s_env	*next;
+}				t_env;
+
 
 typedef	struct s_tok
 {
@@ -47,8 +61,17 @@ typedef	struct	s_sig
 
 typedef	struct	s_config
 {
+	int			in;
+	int			out;
+	int			pipein;
+	int			pipeout;
+	int			savein;
+	int			saveout;
 	int			exit;
 	int			excode; //код выхода
+	char		**env;
+	pid_t		pid;
+	t_env		*envl;
 	t_sig		sig;// сигналы
 	t_tok		*tok;// список вызовов
 }				t_config;
@@ -57,4 +80,20 @@ t_tok	*analys(char *line);
 int		skipsep(t_tok *tok, char *line, int i);
 int		redir(char *line, int i, t_tok *tok);
 int		issep(char c);
+void	exec(t_config *cnf);
+int		inp(t_config *cnf, t_tok *pnt);
+int		dir(t_config *cnf, t_tok *pnt);
+void	resfds(t_config *cnf);
+int		countargs(t_arg *arg);
+void	init(t_config *cnf, char **env);
+int		lenenv(t_env *env);
+char	*getstr(t_arg *arg, t_env *env);
+int		goexec(t_config *cnf, t_tok *pnt, char **targ);
+void	tf(char **tab);
+int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ);
+int		isbuilt(char *name);
+void	closefd(int fd);
+void	closefds(t_config *cnf);
+void	resetfds(t_config *cnf);
+void	savefd(t_config *cnf);
 # endif

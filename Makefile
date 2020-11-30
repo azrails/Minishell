@@ -18,7 +18,15 @@ LIBFT = -L libft -lft
 
 SRCS = src/parser/main.c \
 		src/parser/toks.c \
-		src/parser/tool.c
+		src/parser/tool.c \
+		src/parser/env.c \
+		src/exec/exec.c \
+		src/exec/redirect.c \
+		src/exec/tool.c \
+		src/exec/ex.c \
+		src/exec/fd.c \
+		src/exec/execute.c \
+		src/builtin/exbuiltin.c
 
 O = $(SRCS:.c=.o)
 
