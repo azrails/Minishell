@@ -60,7 +60,7 @@ void	pars(t_config *cnf)
 	ptf = cnf->tok;
 	/*while (ptf)
 	{
-		printf("type rdir %d , func %s , path rdir %s \n",ptf->rdir, ptf->func, ptf->prdir);
+		printf("type tsep %d , type rdir %d , func %s , path rdir %s \n",ptf->tsep, ptf->rdir, ptf->func, ptf->prdir);
 		tmp = ptf->arg;
 		while (tmp)
 		{
@@ -75,9 +75,6 @@ int		main(int argc, char **argv, char **env)
 {
 	t_config cnf;
 
-	cnf.exit = 1;
-	cnf.in = 0;
-	cnf.out = 1;
 	init(&cnf, env);
 	while(cnf.exit)
 	{
@@ -88,6 +85,9 @@ int		main(int argc, char **argv, char **env)
 		pars(&cnf);
 		if (cnf.tok != NULL)
 			exec(&cnf);
+		freetok(cnf.tok);
 	}
-	return (0);
+	tf(cnf.env);
+	freeenvl(cnf.envl);
+	return (cnf.excode);
 }

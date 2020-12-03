@@ -48,9 +48,9 @@ static	void	envtolist(t_config *cnf, char **env)
 	tmp = ft_frstsplit(env[0], '=');
 	list->key = tmp[0];
 	list->value = tmp[1];
+	free(tmp);
 	while (env && env[i])
 	{
-		free(tmp);
 		if (!(next = malloc(sizeof(t_env))))
 			return ;
 		tmp = ft_frstsplit(env[i], '=');
@@ -60,6 +60,7 @@ static	void	envtolist(t_config *cnf, char **env)
 		list->next = next;
 		list = next;
 		i++;
+		free(tmp);
 	}
 }
 
@@ -92,8 +93,9 @@ void		init(t_config *cnf, char **env)
 {
 	int i = 0;
 
-	cnf->in = 0;
-	cnf->out = 1;
+	cnf->exit = 1;
+	cnf->in = dup(0);
+	cnf->out = dup(1);
 	cnf->pipein = -1;
 	cnf->pipeout = -1;
 	cnf->savein = -1;

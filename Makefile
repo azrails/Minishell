@@ -26,7 +26,8 @@ SRCS = src/parser/main.c \
 		src/exec/ex.c \
 		src/exec/fd.c \
 		src/exec/execute.c \
-		src/builtin/exbuiltin.c
+		src/builtin/exbuiltin.c \
+		src/exit/exit.c
 
 O = $(SRCS:.c=.o)
 

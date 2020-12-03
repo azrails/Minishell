@@ -150,7 +150,9 @@ static	t_tok	*newtok(char *line, int *i)
 
 	if (!(tok = malloc(sizeof(t_tok))))
 		return(NULL);
+	tok->qfunc = 0;
 	tok->rdir = 0;
+	tok->tsep = 0;
 	tok->arg = NULL;
 	tok->next = NULL;
 	tok->prdir = NULL;

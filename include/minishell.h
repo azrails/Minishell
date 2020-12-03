@@ -24,6 +24,11 @@
 #include <sys/wait.h>
 # include "../libft/libft.h"
 
+typedef	struct  c_pipe
+{
+	int			cp;
+}				t_pipe;
+
 typedef	struct s_arg
 {
 	int			quote;// тип кавычек в которые взят аргумент 1 == ' & 2 == " & 0 == без кавычек
@@ -42,7 +47,7 @@ typedef	struct s_env
 
 typedef	struct s_tok
 {
-	int			cfunc; //код функции тип echo == 1, итд возможно оно и не нужно
+	int			qfunc; //взята ли функция в кавычки
 	int			rdir; //тип редиректа : 1 == < , 2 == > , 3 == >> , 0 == без редиректа
 	int			tsep; //tip separator if ; => 0 if | => 1,2...n
 	char		*prdir; // куда редирект
@@ -96,4 +101,9 @@ void	closefd(int fd);
 void	closefds(t_config *cnf);
 void	resetfds(t_config *cnf);
 void	savefd(t_config *cnf);
+void	freetok(t_tok *tok);
+void	freeenvl(t_env *env);
+void	ft_exit(t_config *cnf, char **targ);
+int		gopipe(t_tok *pnt, t_config *cnf);
+char	*getname(t_config *cnf);
 # endif

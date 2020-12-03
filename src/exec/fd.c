@@ -14,24 +14,24 @@
 
 void	savefd(t_config *cnf)
 {
-	cnf->savein = dup(cnf->in);
-	cnf->saveout = dup(cnf->saveout);
+	dup2(cnf->in, 0);
+	dup2(cnf->out, 1);
 }
 
 void	closefds(t_config *cnf)
 {
 	closefd(cnf->pipein);
 	closefd(cnf->pipeout);
-	closefd(cnf->in);
-	closefd(cnf->out);
+	closefd(cnf->savein);
+	closefd(cnf->saveout);
 }
 
 void	resetfds(t_config *cnf)
 {
-	dup2(cnf->savein, cnf->in);
-	dup2(cnf->saveout, cnf->out);
-	closefd(cnf->savein);
-	closefd(cnf->saveout);
+	cnf->savein = -1;
+	cnf->saveout = -1;
+	cnf->saveout = -1;
+	cnf->savein = -1;
 	cnf->pipein = -1;
 	cnf->pipeout = -1;
 }

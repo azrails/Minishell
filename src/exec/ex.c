@@ -42,7 +42,10 @@ static	int		countenv(t_env *env, char *s, int i)
 			break;
 		e = e->next;
 	}
-	c = ft_strlen(e->value);
+	if (e)
+		c = ft_strlen(e->value);
+	if (tmp)
+		free(tmp);
 	return (c);
 }
 
@@ -85,7 +88,7 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 			break;
 		j++;
 	}
-	tmp = malloc(sizeof(char) * (j - i));
+	tmp = malloc(sizeof(char) * (j - i) + 1);
 	while (i < j)
 	{
 		tmp[c] = str[i];
@@ -100,12 +103,14 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 		e = e->next;
 	}
 	j = 0;
-	while (e->value[j])
+	while (e && e->value[j])
 	{
 		s[k] = e->value[j];
 		k++;
 		j++;
 	}
+	if (tmp)
+		free(tmp);
 	return (k - 1);
 }
 
@@ -141,3 +146,21 @@ char	*getstr(t_arg *arg, t_env *env)
 	ret[j] = 0;
 	return (ret);
 }
+
+/*char	*getname(t_config *cnf, t_tok *pnt)
+{
+	char	*ret;
+	int		i;
+	int		j;
+	int		len;
+
+	i = 0;
+	j = 0;
+	if (pnt->qfunc == 1)
+		return (ft_strdup(pnt->func));
+	else
+		{
+
+		}
+	retrun (ret);
+}*/
