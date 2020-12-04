@@ -42,6 +42,7 @@ static	int		countenv(t_env *env, char *s, int i)
 			break;
 		e = e->next;
 	}
+	c = 0;
 	if (e)
 		c = ft_strlen(e->value);
 	if (tmp)
@@ -65,6 +66,8 @@ static	int		specstrlen(char *s, t_env *env)
 			count += countenv(env, s, ++i);
 			while (s[i] && s[i] != ' ')
 				i++;
+			if (s[i] == '\0')
+				break ;
 			i--;
 		}
 		i++;
@@ -111,7 +114,12 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 	}
 	if (tmp)
 		free(tmp);
-	return (k - 1);
+	if (k == 0 && !e)
+		return (k);
+	else if (k == 1 && e)
+		return (k);
+	else
+		return (k - 1);
 }
 
 char	*getstr(t_arg *arg, t_env *env)
@@ -147,7 +155,65 @@ char	*getstr(t_arg *arg, t_env *env)
 	return (ret);
 }
 
-/*char	*getname(t_config *cnf, t_tok *pnt)
+static	char	*namefunc(t_config *cnf, t_tok *pnt, int len)
+{
+	t_env *env;
+	char	*ret;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	env = cnf->envl;
+	ret = malloc(sizeof(char) * len + 1);
+	while (pnt->func[i])
+	{
+		if (((pnt->func[i] != '$') || (i != 0 && pnt->func[i] == '$' && pnt->func[i - 1] == '\\')))
+			ret[j] = pnt->func[i];
+		else if (pnt->func[i] == '$')
+		{
+			j = ptenv(pnt->func, env, ++i, ret, j);
+			while (pnt->func[i] && pnt->func[i] != ' ')
+				i++;
+			if (pnt->func[i] == '\0')
+				break ;
+			i--;
+		}
+		j++;
+		i++;
+	}
+	ret[j] = 0;
+	return (ret);
+}
+
+static	char	*func(t_tok *pnt, t_config *cnf)
+{
+	int		len;
+	t_arg	*args;
+	t_env	*env;
+	char	*ret;
+
+	env = cnf->envl;
+	len = specstrlen(pnt->func, env);
+	while (len == 0 && pnt->arg)
+	{
+		env = cnf->envl;
+		args = pnt->arg;
+		free(pnt->func);
+		pnt->func = ft_strdup(args->sarg);
+		pnt->qfunc = args->quote;
+		len = specstrlen(pnt->func, env);
+		pnt->arg = pnt->arg->next;
+		free(args->sarg);
+		free(args);
+		if (pnt->qfunc == 1)
+			return(ft_strdup(pnt->func));
+	}
+	ret = namefunc(cnf, pnt, len);
+	return (ret);
+}
+
+char	*getname(t_config *cnf, t_tok *pnt)
 {
 	char	*ret;
 	int		i;
@@ -159,8 +225,6 @@ char	*getstr(t_arg *arg, t_env *env)
 	if (pnt->qfunc == 1)
 		return (ft_strdup(pnt->func));
 	else
-		{
-
-		}
-	retrun (ret);
-}*/
+		ret = func(pnt, cnf);
+	return (ret);
+}

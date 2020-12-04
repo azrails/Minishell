@@ -20,6 +20,7 @@ SRCS = src/parser/main.c \
 		src/parser/toks.c \
 		src/parser/tool.c \
 		src/parser/env.c \
+		src/parser/redir.c \
 		src/exec/exec.c \
 		src/exec/redirect.c \
 		src/exec/tool.c \

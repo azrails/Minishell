@@ -74,12 +74,21 @@ static	int		bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
 	{
 		if (p && ft_strchr(p, '/'))
 			execve(p, targ, cnf->env);
-		status = errs(p, pnt->func);
+		status = errs(p, targ[0]);
 		exit(status);
 	}
 	else
 		waitpid(cnf->pid, &status, 0);
 	return (status);
+}
+
+static int		is_absolute_path(char *path)
+{
+	struct stat	s;
+
+	if (!(stat(path, &s)))
+		return (1);
+	return (0);
 }
 
 int		goexec(t_config *cnf, t_tok *pnt, char **targ)
@@ -94,20 +103,25 @@ int		goexec(t_config *cnf, t_tok *pnt, char **targ)
 	p = NULL;
 	env = cnf->envl;
 	status = 127;
-	while(env && env->key && ft_strcmp(env->key, "PATH"))
-		env = env->next;
-	if (env == NULL)
-		return (bin(p, targ, cnf, pnt));
-	tp = ft_split(env->value, ':');
-	if (!(pnt->func) && !tp[0])
-		return (1);
-	while (pnt->func && tp[i] && p == NULL)
-		p = srchpth(tp[i++], pnt->func);
-	if (p != NULL)
-		status = bin(p, targ, cnf, pnt);
+	if (is_absolute_path(targ[0]))
+		status = bin(targ[0], targ, cnf, pnt);
 	else
-		status = bin(p, targ, cnf, pnt);
-	tf(tp);
-	free(p);
+	{
+		while(env && env->key && ft_strcmp(env->key, "PATH"))
+			env = env->next;
+		if (env == NULL)
+			return (bin(p, targ, cnf, pnt));
+		tp = ft_split(env->value, ':');
+		if (!(pnt->func) && !tp[0])
+			return (1);
+		while (pnt->func && tp[i] && p == NULL)
+			p = srchpth(tp[i++], pnt->func);
+		if (p != NULL)
+			status = bin(p, targ, cnf, pnt);
+		else
+			status = bin(p, targ, cnf, pnt);
+		free(p);
+		tf(tp);
+	}
 	return (status);
 }

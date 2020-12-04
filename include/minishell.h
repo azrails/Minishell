@@ -20,8 +20,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <dirent.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
 # include "../libft/libft.h"
 
 typedef	struct  c_pipe
@@ -44,6 +45,12 @@ typedef	struct s_env
 	struct  s_env	*next;
 }				t_env;
 
+typedef	struct  s_rdir
+{
+	int			type;
+	char		*prdir;
+	struct s_rdir *next;
+}				t_rdir;
 
 typedef	struct s_tok
 {
@@ -52,6 +59,7 @@ typedef	struct s_tok
 	int			tsep; //tip separator if ; => 0 if | => 1,2...n
 	char		*prdir; // куда редирект
 	char		*func; //имя функции
+	t_rdir		*ndir;
 	t_arg		*arg; //список аргументов
 	struct	s_tok	*next;
 	struct	s_tok	*prev;
@@ -66,6 +74,7 @@ typedef	struct	s_sig
 
 typedef	struct	s_config
 {
+	int			err;
 	int			in;
 	int			out;
 	int			pipein;
@@ -105,5 +114,7 @@ void	freetok(t_tok *tok);
 void	freeenvl(t_env *env);
 void	ft_exit(t_config *cnf, char **targ);
 int		gopipe(t_tok *pnt, t_config *cnf);
-char	*getname(t_config *cnf);
+char	*getname(t_config *cnf, t_tok *pnt);
+int		isredir(char c);
+int		addredir(t_tok *tok, int i, char *line);
 # endif

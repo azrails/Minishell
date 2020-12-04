@@ -97,6 +97,8 @@ static	t_arg	*getarg(char *line, int *i)
 			eq = 0;
 		if ((line[j] == '\"' && eq == 2))
 			eq = 0;
+		if (eq == 0 && isredir(line[j]))
+			break ;
 		arglen++;
 		j++;
 	}
@@ -131,6 +133,8 @@ static	int		args(char *line, int i, t_tok *tok)
 		i = ft_skipspace(line, i);
 		if (line[i] == '\0' || issep(line[i]))
 			break;
+		if (isredir(line[i]))
+			i = addredir(tok, i, line);
 		if(!(farg = getarg(line, &i)))
 			return (-1);
 		farg->prev = sarg;
@@ -156,6 +160,7 @@ static	t_tok	*newtok(char *line, int *i)
 	tok->arg = NULL;
 	tok->next = NULL;
 	tok->prdir = NULL;
+	tok->ndir = NULL;
 	if ((*i = funcname(line, *i, tok)) < 0)
 		return (NULL);
 	while (line[*i])

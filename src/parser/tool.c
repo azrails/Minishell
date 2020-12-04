@@ -98,7 +98,7 @@ int		redir(char *line, int i, t_tok *tok)
 	else if (line[i] && (line[i] == '>' && line[i + 1] == '>'))
 	{
 		tok->rdir = 3;
-		i++;
+		i+=2;
 		if ((i = prdir(tok, line, i)) < 0)
 			return (-1);
 	}

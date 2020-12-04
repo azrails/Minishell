@@ -41,6 +41,7 @@ void	pars(t_config *cnf)
 	t_tok	*tok;
 
 	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	ft_putstr_fd("\e[1;38;5;47mminishell:\e[0m ", 2);
 	if(get_next_line(0 ,&line) < 0)/////ctrl-d == eof => когда из гнл приходит 0 надо выходить из шела
 	{

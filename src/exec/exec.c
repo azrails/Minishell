@@ -24,11 +24,18 @@ static	char	**argtomatrix(t_tok *pnt, t_config *cnf)
 	tmp = pnt->arg;
 	if (!(args = malloc(sizeof(char *) * (j + 2))))
 		return (NULL);
-	args[0] = ft_strdup(pnt->func);
-	//args[0] = getname(cnf, pnt);
+	args[0] = getname(cnf, pnt);
+	if (!args || !args[0] || !args[0][0])
+	{
+		cnf->err = 1;
+		return (NULL);
+	}
+	tmp = pnt->arg;
 	while (tmp && i < j + 1)
 	{
 		args[i] = getstr(tmp, cnf->envl);
+		if (!args[i] || !args[i][0])
+			i--;
 		i++;
 		tmp = tmp->next;
 	}
@@ -44,13 +51,42 @@ static	void	preex(t_config *cnf, t_tok *pnt)
 	i = 0;
 	targ = NULL;
 	targ = argtomatrix(pnt, cnf);
-	if (pnt->func && !(ft_strcmp(pnt->func, "exit")))
+	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && cnf->err == 0)
 		ft_exit(cnf, targ);
-	else if (targ && pnt->func && isbuilt(pnt->func) && cnf->exit)
+	else if (targ && pnt->func && isbuilt(pnt->func) && cnf->exit && cnf->err == 0)
 		gobuiltin(cnf, pnt, targ);
-	else if (pnt->func && cnf->exit)
+	else if (pnt->func && cnf->exit && cnf->err == 0)
 		cnf->excode = goexec(cnf, pnt, targ);
 	tf(targ);
+}
+
+static	int		cyclerdir(t_tok *pnt, t_config *cnf)
+{
+	t_rdir	*tmp;
+
+	if (pnt->rdir != 0)
+	{
+		while (pnt->ndir)
+		{
+			tmp = pnt->ndir;
+			free(pnt->prdir);
+			pnt->prdir = ft_strdup(tmp->prdir);
+			pnt->rdir = tmp->type;
+			if (pnt->rdir == 1)
+			{
+				if(!(inp(cnf, pnt)))
+				return(0);
+			}
+			else if (pnt->rdir == 2 || pnt->rdir == 3)
+			{
+				if(!(dir(cnf, pnt)))
+				return (0);
+			}
+			pnt->ndir = pnt->ndir->next;
+			free(tmp);
+		}
+	}
+	return (1);
 }
 
 static	int		pipedir(t_tok *pnt, t_config *cnf)
@@ -68,6 +104,8 @@ static	int		pipedir(t_tok *pnt, t_config *cnf)
 		if(!(dir(cnf, pnt)))
 			return (0);
 	}
+	if (!cyclerdir(pnt, cnf))
+		return (0);
 	if (pnt->rdir == 0 && pnt->tsep == 1)
 		gopipe(pnt, cnf);
 	preex(cnf, pnt);
@@ -82,6 +120,7 @@ void	exec(t_config *cnf)
 	pnt = cnf->tok;
 	while (pnt)
 	{
+		cnf->err = 0;
 		pipedir(pnt, cnf);
 		savefd(cnf);
 		closefds(cnf);
