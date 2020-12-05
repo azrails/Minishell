@@ -12,11 +12,6 @@
 
 #include "../../include/minishell.h"
 
-int		gopipe(t_tok *pnt, t_config *cnf)
-{
-	return (1);
-}
-
 int		inp(t_config *cnf, t_tok *pnt)
 {
 	closefd(cnf->savein);

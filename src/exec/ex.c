@@ -146,6 +146,8 @@ char	*getstr(t_arg *arg, t_env *env)
 			j = ptenv(arg->sarg, env, ++i, ret, j);
 			while (arg->sarg[i] && arg->sarg[i] != ' ')
 				i++;
+			if (arg->sarg[i] == '\0')
+				break ;
 			i--;
 		}
 		j++;

@@ -27,7 +27,10 @@
 
 typedef	struct  c_pipe
 {
+	int			i;
 	int			cp;
+	pid_t		*pid;
+	int			**pipefd;
 }				t_pipe;
 
 typedef	struct s_arg
@@ -85,6 +88,7 @@ typedef	struct	s_config
 	int			excode; //код выхода
 	char		**env;
 	pid_t		pid;
+	t_pipe		pipe;
 	t_env		*envl;
 	t_sig		sig;// сигналы
 	t_tok		*tok;// список вызовов
@@ -113,8 +117,8 @@ void	savefd(t_config *cnf);
 void	freetok(t_tok *tok);
 void	freeenvl(t_env *env);
 void	ft_exit(t_config *cnf, char **targ);
-int		gopipe(t_tok *pnt, t_config *cnf);
 char	*getname(t_config *cnf, t_tok *pnt);
 int		isredir(char c);
 int		addredir(t_tok *tok, int i, char *line);
+t_tok		*gopipe(t_tok *pnt, t_config *cnf);
 # endif

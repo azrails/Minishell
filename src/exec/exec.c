@@ -50,6 +50,7 @@ static	void	preex(t_config *cnf, t_tok *pnt)
 
 	i = 0;
 	targ = NULL;
+	//printf("arg preex %s : %s : %d : %d\n\n",pnt->func, pnt->arg->sarg, cnf->pipe.i, cnf->pipe.pid[cnf->pipe.i]);
 	targ = argtomatrix(pnt, cnf);
 	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && cnf->err == 0)
 		ft_exit(cnf, targ);
@@ -107,7 +108,7 @@ static	int		pipedir(t_tok *pnt, t_config *cnf)
 	if (!cyclerdir(pnt, cnf))
 		return (0);
 	if (pnt->rdir == 0 && pnt->tsep == 1)
-		gopipe(pnt, cnf);
+		pnt = gopipe(pnt, cnf);
 	preex(cnf, pnt);
 	return (1);
 }
@@ -116,20 +117,31 @@ void	exec(t_config *cnf)
 {
 	t_tok	*pnt;
 	int		status;
+	int		i;
 
 	pnt = cnf->tok;
 	while (pnt)
 	{
+		i = 0;
+		cnf->pipe.cp = 0;
 		cnf->err = 0;
 		pipedir(pnt, cnf);
 		savefd(cnf);
 		closefds(cnf);
 		resetfds(cnf);
-		waitpid(-1, &status, 0);
-		//if (WIFEXITED(status))
-			//cnf->excode = WEXITSTATUS(status);
-		//else
-		//	cnf->excode = 1;*/
+		if (cnf->pipe.cp != 0 && ((cnf->pipe.i != 0 &&
+			cnf->pipe.pid[cnf->pipe.i - 1] == 0) || cnf->pipe.pid[cnf->pipe.i] == 0))
+			exit(cnf->excode);
+		if (cnf->pipe.cp != 0)
+		{
+			waitpid(-1, &status, 0);
+			cnf->excode = WEXITSTATUS(status);
+		}
+		while (i < cnf->pipe.cp)
+		{
+			pnt = pnt->next;
+			i++;
+		}
 		pnt = pnt->next;
 	}
 }

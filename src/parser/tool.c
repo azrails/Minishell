@@ -60,7 +60,7 @@ static	int		prdir(t_tok *tok, char  *line, int i)
 		if (line[i] == '\"' && oq == 2)
 			oq = 0;
 		tok->prdir[count] = line[i];
-		if (oq == 0 && (line[i] == '\''||line[i] == '\"'))
+		if (oq == 0 && (line[i] == '\'' || line[i] == '\"'))
 			count--;
 		count++;
 		i++;
