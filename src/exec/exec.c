@@ -97,6 +97,8 @@ int		pipedir(t_tok *pnt, t_config *cnf)
 	int pipe;
 
 	pipe = 0;
+	if (cnf->child == 1)
+		cnf->child = 2;
 	if (pnt->rdir == 1)
 	{
 		if(!(inp(cnf, pnt)))
@@ -111,8 +113,11 @@ int		pipedir(t_tok *pnt, t_config *cnf)
 		return (0);
 	if (pnt->rdir == 0 && pnt->tsep == 1 && cnf->child == 0)
 		pnt = gopipe(pnt, cnf);
-	if (cnf->child != 2)
+	if (cnf->child == 1)
+		pipedir(pnt, cnf);
+	if (cnf->child == 2 || cnf->child == 0)
 		preex(cnf, pnt);
+	cnf->child = 3;
 	return (1);
 }
 
@@ -133,14 +138,16 @@ void	exec(t_config *cnf)
 		savefd(cnf);
 		closefds(cnf);
 		resetfds(cnf);
-		if (cnf->pipe.cp != 0 && ((cnf->pipe.i != 0 &&
-			cnf->pipe.pid[cnf->pipe.i - 1] == 0) || cnf->pipe.pid[cnf->pipe.i] == 0))
-			exit(cnf->excode);
+		//printf("%d : %d\n",cnf->pipe.pid[cnf->pipe.i],cnf->pipe.i);
+		//printf("%d\n",cnf->pipe.pid[cnf->pipe.i]);
 		if (cnf->pipe.cp != 0)
 		{
 			waitpid(-1, &status, 0);
 			cnf->excode = WEXITSTATUS(status);
 		}
+		if (cnf->pipe.cp != 0 && ((cnf->pipe.i != 0 &&
+			cnf->pipe.pid[cnf->pipe.i - 1] == 0) || cnf->pipe.pid[cnf->pipe.i] == 0))
+			exit(cnf->excode);
 		while (i < cnf->pipe.cp)
 		{
 			pnt = pnt->next;
