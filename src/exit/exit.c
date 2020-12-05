@@ -73,7 +73,8 @@ void	ft_exit(t_config *cnf, char **targ)
 	t = 0;
 	i = 0;
 	cnf->exit = 0;
-	ft_putstr_fd("exit\n", 2);
+	if (cnf->pipe.cp == 0)
+		ft_putstr_fd("exit\n", 2);
 	if ((c = lentarg(targ)) > 1)
 	{
 		while (targ[1][i])

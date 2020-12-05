@@ -86,6 +86,7 @@ typedef	struct	s_config
 	int			saveout;
 	int			exit;
 	int			excode; //код выхода
+	int			child;
 	char		**env;
 	pid_t		pid;
 	t_pipe		pipe;
@@ -121,4 +122,5 @@ char	*getname(t_config *cnf, t_tok *pnt);
 int		isredir(char c);
 int		addredir(t_tok *tok, int i, char *line);
 t_tok		*gopipe(t_tok *pnt, t_config *cnf);
+int		pipedir(t_tok *pnt, t_config *cnf);
 # endif

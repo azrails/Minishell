@@ -68,6 +68,9 @@ t_tok		*gopipe(t_tok *pnt, t_config *cnf)
 			dup2(cnf->pipe.pipefd[i][0], 0);
 			cnf->pipein = cnf->pipe.pipefd[i][0];
 			pnt = pnt->next;
+			cnf->child = 1;
+			pipedir(pnt, cnf);
+			cnf->child = 2;
 		}
 		else
 		{

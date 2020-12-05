@@ -52,6 +52,8 @@ static	void	preex(t_config *cnf, t_tok *pnt)
 	targ = NULL;
 	//printf("arg preex %s : %s : %d : %d\n\n",pnt->func, pnt->arg->sarg, cnf->pipe.i, cnf->pipe.pid[cnf->pipe.i]);
 	targ = argtomatrix(pnt, cnf);
+	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && (cnf->pipe.cp != 0 && cnf->pipe.i == 0))
+		cnf->err = 2;
 	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && cnf->err == 0)
 		ft_exit(cnf, targ);
 	else if (targ && pnt->func && isbuilt(pnt->func) && cnf->exit && cnf->err == 0)
@@ -90,7 +92,7 @@ static	int		cyclerdir(t_tok *pnt, t_config *cnf)
 	return (1);
 }
 
-static	int		pipedir(t_tok *pnt, t_config *cnf)
+int		pipedir(t_tok *pnt, t_config *cnf)
 {
 	int pipe;
 
@@ -107,9 +109,10 @@ static	int		pipedir(t_tok *pnt, t_config *cnf)
 	}
 	if (!cyclerdir(pnt, cnf))
 		return (0);
-	if (pnt->rdir == 0 && pnt->tsep == 1)
+	if (pnt->rdir == 0 && pnt->tsep == 1 && cnf->child == 0)
 		pnt = gopipe(pnt, cnf);
-	preex(cnf, pnt);
+	if (cnf->child != 2)
+		preex(cnf, pnt);
 	return (1);
 }
 
@@ -125,6 +128,7 @@ void	exec(t_config *cnf)
 		i = 0;
 		cnf->pipe.cp = 0;
 		cnf->err = 0;
+		cnf->child = 0;
 		pipedir(pnt, cnf);
 		savefd(cnf);
 		closefds(cnf);
