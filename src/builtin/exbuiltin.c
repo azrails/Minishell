@@ -14,7 +14,7 @@
 
 int		isbuilt(char *name)
 {
-	/*if (!ft_strcmp(name, "cd"))
+	if (!ft_strcmp(name, "cd"))
 		return (1);
 	if (!ft_strcmp(name, "echo"))
 		return (1);
@@ -25,23 +25,28 @@ int		isbuilt(char *name)
 	if (!ft_strcmp(name, "unset"))
 		return (1);
 	if (!ft_strcmp(name, "env"))
-		return (1);*/
+		return (1);
 	return (0);
 }
 
 int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ)
 {
-	/*if (!ft_strcmp(pnt->func, "cd"))
+	if (!ft_strcmp(pnt->func, "cd"))
 		cnf->excode = ft_cd(targ, cnf->env);
 	if (!ft_strcmp(pnt->func, "echo"))
 		cnf->excode = ft_echo(targ);
 	if (!ft_strcmp(pnt->func, "pwd"))
 		cnf->excode = ft_pwd();
-	if (!ft_strcmp(pnt->func, "export"))
-		cnf->excode = ft_export(??? ,targ ,cnf->env);//не знаю 1 аргумент
-	if (!ft_strcmp(pnt->func, "unset"))
-		cnf->excode = ft_unset();//лист??
+/*	if (!ft_strcmp(pnt->func, "export"))
+	{
+		if (targ && targ[1] && !targ[2])
+			cnf->excode = ft_export(1 ,targ ,cnf->env);//не знаю 1 аргумент
+		else if (targ && targ[1] && targ[2])
+			cnf->excode = ft_export(2 ,targ ,cnf->env);
+	}*/
+	//if (!ft_strcmp(pnt->func, "unset"))
+	//	cnf->excode = ft_unset(targ, cnf->envl);//лист??
 	if (!ft_strcmp(pnt->func, "env"))
-		cnf->excode = ft_env(cnf->env);*/
+		cnf->excode = ft_env(cnf->env);
 	return (0);
 }

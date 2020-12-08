@@ -26,9 +26,14 @@ SRCS = src/parser/main.c \
 		src/exec/tool.c \
 		src/exec/ex.c \
 		src/exec/fd.c \
+		src/exec/prerdir.c \
 		src/exec/pipe.c \
 		src/exec/execute.c \
 		src/builtin/exbuiltin.c \
+		src/builtin/ft_cd.c \
+		src/builtin/ft_echo.c \
+		src/builtin/ft_env.c \
+		src/builtin/ft_pwd.c \
 		src/exit/exit.c
 
 O = $(SRCS:.c=.o)

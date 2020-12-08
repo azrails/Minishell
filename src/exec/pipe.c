@@ -12,9 +12,9 @@
 
 #include "../../include/minishell.h"
 
-int		cpipes(t_tok *pnt)
+int				cpipes(t_tok *pnt)
 {
-	t_tok *tmp;
+	t_tok	*tmp;
 	int		i;
 
 	i = 0;
@@ -39,7 +39,7 @@ static	void	ons(t_config *cnf)
 	}
 }
 
-t_tok		*gopipe(t_tok *pnt, t_config *cnf)
+t_tok			*gopipe(t_tok *pnt, t_config *cnf)
 {
 	int i;
 

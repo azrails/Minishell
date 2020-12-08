@@ -12,14 +12,14 @@
 
 #include "../../include/minishell.h"
 
-int		issep(char c)
+int				issep(char c)
 {
 	if (c == ';' || c == ' ' || c == '|')
 		return (1);
 	return (0);
 }
 
-static	int		prdir(t_tok *tok, char  *line, int i)
+static	int		prdir(t_tok *tok, char *line, int i)
 {
 	int	j;
 	int count;
@@ -29,39 +29,21 @@ static	int		prdir(t_tok *tok, char  *line, int i)
 	oq = 0;
 	i = ft_skipspace(line, i);
 	j = i;
-	while (line[j]) // переработать возможно сделать одну проверку для этого цикла и цикла ниже и для funcname
+	while (line[j])
 	{
-		if (line[j] == '\'' && oq == 0)
-			oq = 1;
-		if (line[j] == '\"' && oq == 0)
-			oq = 2;
-		if (line[j] == '\'' && oq == 1)
-			oq = 0;
-		if (line[j] == '\"' && oq == 2)
-			oq = 0;
-		if ((oq == 0 && line[j] == ' ') || (oq == 0  && line[j] == '|' ) || (oq == 0 && line[j] == ';'))
-			break;
-		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
-			count--;
+		oq = checkq(line, j, oq);
+		if (oq == 0 && issep(line[j]))
+			break ;
 		count++;
 		j++;
 	}
 	if (!(tok->prdir = malloc(sizeof(char) * count + 1)))
 		return (-1);
 	count = 0;
-	while (line[i] && i < j) 
+	while (line[i] && i < j)
 	{
-		if (line[i] == '\'' && oq == 0)
-			oq = 1;
-		if (line[i] == '\"' && oq == 0)
-			oq = 2;
-		if (line[i] == '\'' && oq == 1)
-			oq = 0;
-		if (line[i] == '\"' && oq == 2)
-			oq = 0;
+		oq = checkq(line, i, oq);
 		tok->prdir[count] = line[i];
-		if (oq == 0 && (line[i] == '\'' || line[i] == '\"'))
-			count--;
 		count++;
 		i++;
 	}
@@ -69,7 +51,7 @@ static	int		prdir(t_tok *tok, char  *line, int i)
 	return (i);
 }
 
-int		skipsep(t_tok *tok, char *line, int i)
+int				skipsep(t_tok *tok, char *line, int i)
 {
 	if (line[i] == ';')
 	{
@@ -85,7 +67,7 @@ int		skipsep(t_tok *tok, char *line, int i)
 	return (i);
 }
 
-int		redir(char *line, int i, t_tok *tok)
+int				redir(char *line, int i, t_tok *tok)
 {
 	if (line[i] == '<')
 	{
@@ -97,7 +79,7 @@ int		redir(char *line, int i, t_tok *tok)
 	else if (line[i] && (line[i] == '>' && line[i + 1] == '>'))
 	{
 		tok->rdir = 3;
-		i+=2;
+		i += 2;
 		if ((i = prdir(tok, line, i)) < 0)
 			return (-1);
 	}

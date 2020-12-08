@@ -21,17 +21,16 @@ static	void	inclvl(t_config *cnf)
 	while (tmp)
 	{
 		if (!(ft_strcmp(tmp->key, "SHLVL")))
-			break;
+			break ;
 		tmp = tmp->next;
 	}
 	actlvl = ft_atoi(tmp->value);
 	actlvl++;
 	free(tmp->value);
 	tmp->value = ft_itoa(actlvl);
-
 }
 
-void	envtolist(t_config *cnf, char **env)
+void			envtolist(t_config *cnf, char **env)
 {
 	t_env	*next;
 	t_env	*list;
@@ -76,10 +75,10 @@ static	char	**cpyenv(t_config *cnf)
 	i = lenenv(cnf->envl);
 	tmp = cnf->envl;
 	if (!(tab = malloc(sizeof(char *) * (i + 1))))
-		return(NULL);
+		return (NULL);
 	while (j < i)
 	{
-		s = ft_strjoin(tmp->key,"=");
+		s = ft_strjoin(tmp->key, "=");
 		tab[j] = ft_strjoin(s, tmp->value);
 		free(s);
 		j++;
@@ -89,10 +88,8 @@ static	char	**cpyenv(t_config *cnf)
 	return (tab);
 }
 
-void		init(t_config *cnf, char **env)
+void			init(t_config *cnf, char **env)
 {
-	int i = 0;
-
 	cnf->exit = 1;
 	cnf->in = dup(0);
 	cnf->out = dup(1);

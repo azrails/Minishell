@@ -12,9 +12,9 @@
 
 #include "libft.h"
 
-static	int		cnt(char *s, char c)
+static	int			cnt(char *s, char c)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	while (s[i])
@@ -26,18 +26,18 @@ static	int		cnt(char *s, char c)
 	return (0);
 }
 
-static	char	*getbefore(char *s, char c)
+static	char		*getbefore(char *s, char c)
 {
-	int	i;
-	int	j;
-	char *k;
+	int		i;
+	int		j;
+	char	*k;
 
 	i = 0;
 	j = 0;
 	while (s[i])
 	{
 		if (s[i] == c)
-			break;
+			break ;
 		i++;
 	}
 	k = malloc(sizeof(char) * i + 1);
@@ -50,9 +50,9 @@ static	char	*getbefore(char *s, char c)
 	return (k);
 }
 
-static	int		cpos(char *s, char c)
+static	int			cpos(char *s, char c)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	while (s[i])
@@ -64,12 +64,12 @@ static	int		cpos(char *s, char c)
 	return (0);
 }
 
-static	char	*getafter(char *s, char c)
+static	char		*getafter(char *s, char c)
 {
-	int i;
-	int j;
-	int f;
-	char *k;
+	int		i;
+	int		j;
+	int		f;
+	char	*k;
 
 	f = 0;
 	i = cpos(s, c);
@@ -86,7 +86,7 @@ static	char	*getafter(char *s, char c)
 	return (k);
 }
 
-char	**ft_frstsplit(char *s, char c)
+char				**ft_frstsplit(char *s, char c)
 {
 	char	**res;
 

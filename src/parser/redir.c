@@ -12,11 +12,11 @@
 
 #include "../../include/minishell.h"
 
-int		isredir(char c)
+int				isredir(char c)
 {
 	if (c == '<' || c == '>')
 		return (1);
-	return(0);
+	return (0);
 }
 
 static	int		typedir(char *line, int i)
@@ -33,35 +33,35 @@ static	int		typedir(char *line, int i)
 	return (type);
 }
 
-int		checkq(char *line, int i, int eq)
+int				checkq(char *line, int i, int eq)
 {
 	if ((line[i] == '\'' && eq == 0))
-		{
-			if (i > 0 && line[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 1;
-		}
-		else if ((line[i] == '\"' && eq == 0))
-		{
-			if (i > 0 && line[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 2;
-		}
-		else if ((line[i] == '\'' && eq == 1))
+	{
+		if (i > 0 && line[i - 1] == '\\')
 			eq = 0;
-		else if ((line[i] == '\"' && eq == 2))
-		{
-			if (i > 0 && line[i - 1] == '\\')
-				eq = 2;
-			else
-				eq = 0;
-		}
+		else
+			eq = 1;
+	}
+	else if ((line[i] == '\"' && eq == 0))
+	{
+		if (i > 0 && line[i - 1] == '\\')
+			eq = 0;
+		else
+			eq = 2;
+	}
+	else if ((line[i] == '\'' && eq == 1))
+		eq = 0;
+	else if ((line[i] == '\"' && eq == 2))
+	{
+		if (i > 0 && line[i - 1] == '\\')
+			eq = 2;
+		else
+			eq = 0;
+	}
 	return (eq);
 }
 
-int getpth(t_rdir *tmp, char *line, int i)
+int				getpth(t_rdir *tmp, char *line, int i)
 {
 	int j;
 	int	oq;
@@ -75,9 +75,7 @@ int getpth(t_rdir *tmp, char *line, int i)
 	{
 		oq = checkq(line, j, oq);
 		if (oq == 0 && issep(line[j]))
-			break;
-		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
-			count--;
+			break ;
 		count++;
 		j++;
 	}
@@ -87,8 +85,6 @@ int getpth(t_rdir *tmp, char *line, int i)
 	{
 		oq = checkq(line, i, oq);
 		tmp->prdir[count] = line[i];
-		if (oq == 0 && (line[i] == '\''||line[i] == '\"'))
-			count--;
 		count++;
 		i++;
 	}
@@ -96,7 +92,7 @@ int getpth(t_rdir *tmp, char *line, int i)
 	return (i);
 }
 
-int		addredir(t_tok *tok, int i, char *line)
+int				addredir(t_tok *tok, int i, char *line)
 {
 	t_rdir	*tmp;
 	t_rdir	*sc;
@@ -108,14 +104,14 @@ int		addredir(t_tok *tok, int i, char *line)
 		sc = tok->ndir;
 		while (sc && sc->next)
 			sc = sc->next;
-		if(!(tmp = malloc(sizeof(t_rdir))))
+		if (!(tmp = malloc(sizeof(t_rdir))))
 			return (i);
 		tmp->type = typedir(line, i);
 		if (tmp->type == 1 || tmp->type == 2)
 			i++;
 		else
-			i+=2;
-		i = getpth(tmp ,line, i);
+			i += 2;
+		i = getpth(tmp, line, i);
 		tmp->next = NULL;
 		if (sc)
 			sc->next = tmp;

@@ -1,19 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_skipspace.c                                     :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wsallei <wsallei@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: fdarrin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 20:28:18 by wsallei           #+#    #+#             */
-/*   Updated: 2020/11/21 20:28:20 by wsallei          ###   ########.fr       */
+/*   Created: 2020/11/18 15:22:25 by fdarrin           #+#    #+#             */
+/*   Updated: 2020/11/18 15:22:32 by fdarrin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		ft_skipspace(char *line, int i)
+#include "../../include/minishell.h"
+
+int	ft_env(char **environ)
 {
-	while (line[i] == ' ' || line[i] == '\t' || line[i] == '\n' ||
-		line[i] == '\f')
-		i++;
-	return (i);
+	while (*environ)
+	{
+		write(1, *environ, ft_strlen(*environ));
+		write(1, "\n", 1);
+		environ++;
+	}
+	return (errno);
 }

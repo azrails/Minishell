@@ -12,12 +12,12 @@
 
 #include "../../include/minishell.h"
 
-static	int		funcname(char *line, int i, t_tok *tok)
+static	int				funcname(char *line, int i, t_tok *tok)
 {
 	int		endn;
 	int		j;
 	int		eq;
-	
+
 	endn = 0;
 	j = i;
 	eq = 0;
@@ -49,14 +49,14 @@ static	int		funcname(char *line, int i, t_tok *tok)
 		if (eq == 0 && issep(line[j]))
 		{
 			if (j == 0 || (j > 0 && line[j - 1] != '\\'))
-				break;
+				break ;
 		}
-		if (eq == 0 && (line[j] == '\''|| line[j] == '\"'))
+		if (eq == 0 && (line[j] == '\'' || line[j] == '\"'))
 			endn--;
 		endn++;
 		j++;
 	}
-	if(!(tok->func = malloc(sizeof(char) * endn + 1)))
+	if (!(tok->func = malloc(sizeof(char) * endn + 1)))
 		return (-1);
 	endn = 0;
 	while (line[i] && i < j)
@@ -85,7 +85,8 @@ static	int		funcname(char *line, int i, t_tok *tok)
 				eq = 0;
 		}
 		tok->func[endn] = line[i];
-		if ((i == 0 && line[i] == '\\' && eq == 0) || (i != 0 && (line[i] == '\\' && line[i - 1] != '\\') && eq == 0))
+		if ((i == 0 && line[i] == '\\' && eq == 0) || (i != 0
+			&& (line[i] == '\\' && line[i - 1] != '\\') && eq == 0))
 			endn--;
 		if ((line[i] == '\'' || line[i] == '\"') && eq == 0)
 		{
@@ -113,7 +114,7 @@ static	int		funcname(char *line, int i, t_tok *tok)
 	return (i);
 }
 
-static	int		argqt(t_arg *arg, char *line, int i)
+static	int				argqt(t_arg *arg, char *line, int i)
 {
 	arg->quote = 0;
 	if (line[i] == '\'')
@@ -123,14 +124,14 @@ static	int		argqt(t_arg *arg, char *line, int i)
 	return (i);
 }
 
-static	t_arg	*getarg(char *line, int *i)
+static	t_arg			*getarg(char *line, int *i)
 {
-	t_arg *arg;
+	t_arg	*arg;
 	int		arglen;
 	int		j;
 	int		eq;
 	int		q;
-	
+
 	arglen = 0;
 	if (!(arg = malloc(sizeof(t_arg))))
 		return (NULL);
@@ -146,7 +147,7 @@ static	t_arg	*getarg(char *line, int *i)
 		if (issep(line[j]) && eq == 0)
 		{
 			if (j == 0 || (j > 0 && line[j - 1] != '\\'))
-				break;
+				break ;
 		}
 		if ((line[j] == '\'' && eq == 0))
 		{
@@ -206,10 +207,10 @@ static	int		args(char *line, int i, t_tok *tok)
 	{
 		i = ft_skipspace(line, i);
 		if (line[i] == '\0' || (issep(line[i]) && line[i - 1] != '\\'))
-			break;
+			break ;
 		if (isredir(line[i]))
 			i = addredir(tok, i, line);
-		if(!(farg = getarg(line, &i)))
+		if (!(farg = getarg(line, &i)))
 			return (-1);
 		farg->prev = sarg;
 		if (sarg)
@@ -222,12 +223,12 @@ static	int		args(char *line, int i, t_tok *tok)
 	return (i);
 }
 
-static	t_tok	*newtok(char *line, int *i)
+static	t_tok			*newtok(char *line, int *i)
 {
 	t_tok	*tok;
 
 	if (!(tok = malloc(sizeof(t_tok))))
-		return(NULL);
+		return (NULL);
 	tok->qfunc = 0;
 	tok->rdir = 0;
 	tok->tsep = 0;
@@ -244,25 +245,26 @@ static	t_tok	*newtok(char *line, int *i)
 		*i = ft_skipspace(line, *i);
 		if (issep(line[*i]))
 		{
-			if (*i== 0 || (*i > 0 && line[*i - 1] != '\\'))
-				break;
+			if (*i == 0 || (*i > 0 && line[*i - 1] != '\\'))
+				break ;
 		}
 		if ((*i = redir(line, *i, tok)) < 0)
 			return (NULL);
-		if ((line[*i] == ';' && line[*i - 1] != '\\') || (line[*i] == '|' && line[*i - 1] != '\\'))
-			break;
+		if ((line[*i] == ';' && line[*i - 1] != '\\')
+			|| (line[*i] == '|' && line[*i - 1] != '\\'))
+			break ;
 		if ((*i = args(line, *i, tok)) < 0)
 			return (NULL);
 		if (issep(line[*i]))
 		{
-			if (*i== 0 || (*i > 0 && line[*i - 1] != '\\'))
-				break;
+			if (*i == 0 || (*i > 0 && line[*i - 1] != '\\'))
+				break ;
 		}
 	}
 	return (tok);
 }
 
-t_tok	*analys(char *line)
+t_tok					*analys(char *line)
 {
 	int		i;
 	t_tok	*ftok;
@@ -277,8 +279,8 @@ t_tok	*analys(char *line)
 		if (stok)
 			i = skipsep(stok, line, i);
 		if (line[i] == '\0')
-			break;
-		ftok = newtok(line, &i);// добавить фцию которая в случае неудачи удаляет весь список
+			break ;
+		ftok = newtok(line, &i);
 		ftok->prev = stok;
 		if (stok)
 			stok->next = ftok;

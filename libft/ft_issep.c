@@ -9,7 +9,7 @@
 /*   Updated: 2020/05/08 19:59:44 by wsallei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-//КОПИРУЕТ СТРОКУ БЕЗ СИМВОЛОВ УКАЗАННЫХ В СЕТ
+
 static	int			ft_srt(char *s1, char *set)
 {
 	size_t	i;
@@ -64,6 +64,7 @@ char				*ft_strtrim(char const *s1, char const *set)
 {
 	int		size;
 	char	*rez;
+
 	if (!s1 || !set)
 		return (NULL);
 	size = (ft_strlen((char *)s1) - ft_srt((char *)s1, (char *)set));

@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-void	tif(int	**tab)
+void	tif(int **tab)
 {
 	int	i;
 
@@ -44,14 +44,14 @@ void	tf(char **tab)
 
 int		countargs(t_arg *arg)
 {
-	t_arg *tmp;
-	int i;
+	t_arg	*tmp;
+	int		i;
 
 	if (!arg)
 		return (0);
 	i = 0;
 	tmp = arg;
-	while(tmp)
+	while (tmp)
 	{
 		tmp = tmp->next;
 		i++;
@@ -61,14 +61,14 @@ int		countargs(t_arg *arg)
 
 int		lenenv(t_env *env)
 {
-	t_env *tmp;
-	int i;
+	t_env	*tmp;
+	int		i;
 
 	if (!env)
 		return (0);
 	i = 0;
 	tmp = env;
-	while(tmp)
+	while (tmp)
 	{
 		tmp = tmp->next;
 		i++;
@@ -76,7 +76,7 @@ int		lenenv(t_env *env)
 	return (i);
 }
 
-t_env		*freeenv(t_env *env)
+t_env	*freeenv(t_env *env)
 {
 	t_env	*tmp;
 

@@ -3,133 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wsallei <wsallei@student.21-school.ru>     +#+  +:+       +#+        */
+/*   By: fdarrin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/05/30 17:08:09 by wsallei           #+#    #+#             */
-/*   Updated: 2020/05/30 17:08:12 by wsallei          ###   ########.fr       */
+/*   Created: 2020/07/19 12:01:16 by fdarrin           #+#    #+#             */
+/*   Updated: 2020/07/24 18:17:37 by fdarrin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static	char		*check(t_lis *tmp, char **line)
+int		result(int bytes, char *nptr)
 {
-	char *endl;
-	char *ptr;
+	if (bytes == -1)
+		return (-1);
+	if (nptr)
+		return (1);
+	return (0);
+}
 
-	if (tmp->remainder)
+void	copy_tail(char **tail, char **nptr)
+{
+	char	*temp;
+
+	**nptr = '\0';
+	temp = *tail;
+	*tail = ft_strdup(++*nptr);
+	free(temp);
+}
+
+void	check_tail(char ***line, char **tail, char **nptr)
+{
+	char	*temp;
+
+	if ((*nptr = ft_strchr(*tail, '\n')))
 	{
-		if ((endl = ft_strchr(tmp->remainder, '\n')) != NULL)
-		{
-			*endl = '\0';
-			*line = ft_strdup(tmp->remainder);
-			ptr = ft_strdup(endl + 1);
-			free(tmp->remainder);
-			return (ptr);
-		}
-		else
-		{
-			*line = ft_strdup(tmp->remainder);
-			free(tmp->remainder);
-		}
+		**nptr = '\0';
+		temp = **line;
+		**line = ft_strjoin(**line, *tail);
+		free(temp);
+		temp = *tail;
+		*tail = ft_strdup(++*nptr);
+		free(temp);
 	}
 	else
 	{
-		*line = malloc(sizeof(char) * 1);
-		**line = '\0';
-	}
-	return (NULL);
-}
-
-static	void		listdel(t_lis *tmp, t_lis **info, t_lis *tmp2)
-{
-	if (tmp->next == NULL)
-	{
-		if (tmp == *info)
-			*info = NULL;
-		else
-		{
-			while (tmp2->next != tmp)
-				tmp2 = tmp2->next;
-			tmp2->next = NULL;
-		}
-		free(tmp);
-	}
-	else if (tmp == *info && tmp->next != NULL)
-	{
-		*info = tmp->next;
-		free(tmp);
-	}
-	else
-	{
-		while (tmp2->next != tmp)
-			tmp2 = tmp2->next;
-		tmp2->next = tmp->next;
-		free(tmp);
+		temp = **line;
+		**line = ft_strjoin(**line, *tail);
+		free(temp);
+		temp = *tail;
+		*tail = NULL;
+		free(temp);
 	}
 }
 
-static	int			errors(int red, t_lis *tmp, t_lis **info)
+int		get_next_line(int fd, char **line)
 {
-	t_lis	*tmp2;
+	char			buf[BUFFER_SIZE + 1];
+	int				bytes;
+	static char		*tail;
+	char			*temp;
+	char			*nptr;
 
-	tmp2 = *info;
-	if ((red == 0 && (tmp->remainder == NULL)) || red == -1)
-	{
-		listdel(tmp, info, tmp2);
-		return (red == -1 ? -1 : 0);
-	}
-	return (1);
-}
-
-static	int			getl(char **line, t_lis *tmp, int fd, char *buf)
-{
-	char	*endl;
-	int		red;
-
-	red = 0;
-	while (!(tmp->remainder) && (red = read(fd, buf, BUFFER_SIZE)) > 0)
-	{
-		buf[red] = '\0';
-		if ((endl = ft_strchr(buf, '\n')) != NULL)
-		{
-			*endl = '\0';
-			if (*(endl + 1) != '\0')
-				tmp->remainder = ft_strdup(endl + 1);
-			else
-			{
-				endl = ft_strjoin(*line, buf);
-				free(*line);
-				*line = endl;
-				break ;
-			}
-		}
-		endl = ft_strjoin(*line, buf);
-		free(*line);
-		*line = endl;
-	}
-	return (red);
-}
-
-int					get_next_line(int fd, char **line)
-{
-	static	t_lis	*info;
-	t_lis			*tmp;
-	int				red;
-	char			*buf;
-
-	if (BUFFER_SIZE < 1 || !line || fd < 0)
+	if (fd < 0 || !line || BUFFER_SIZE < 1 || !(*line = malloc(1)))
 		return (-1);
-	tmp = info;
-	while (tmp && tmp->fd != fd && tmp->next)
-		tmp = tmp->next;
-	if (!tmp || !(tmp->fd == fd))
-		if (!(tmp = infonew(fd, &info)))
-			return (-1);
-	tmp->remainder = check(tmp, line);
-	if (!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
-		return (-1);
-	red = getl(line, tmp, fd, buf);
-	free(buf);
-	return (errors(red, tmp, &info));
+	tail = NULL;
+	**line = 0;
+	nptr = NULL;
+	bytes = 0;
+	if (tail)
+		check_tail(&line, &tail, &nptr);
+	while (!nptr && (bytes = read(fd, buf, BUFFER_SIZE)) > 0)
+	{
+		buf[bytes] = '\0';
+		if ((nptr = ft_strchr(buf, '\n')))
+		{
+			copy_tail(&tail, &nptr);
+		}
+		temp = *line;
+		*line = ft_strjoin(*line, buf);
+		free(temp);
+	}
+	if (tail)
+		free(tail);
+	return (result(bytes, nptr));
 }

@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static	int		countenv(t_env *env, char *s, int i)
+static	int			countenv(t_env *env, char *s, int i)
 {
 	int		j;
 	int		c;
@@ -25,7 +25,7 @@ static	int		countenv(t_env *env, char *s, int i)
 	while (s[j])
 	{
 		if (s[j] == ' ' || s[j] == '\"')
-			break;
+			break ;
 		j++;
 	}
 	tmp = malloc(sizeof(char) * (j - i) + 1);
@@ -39,7 +39,7 @@ static	int		countenv(t_env *env, char *s, int i)
 	while (e)
 	{
 		if (!(ft_strcmp(tmp, e->key)))
-			break;
+			break ;
 		e = e->next;
 	}
 	c = 0;
@@ -50,11 +50,11 @@ static	int		countenv(t_env *env, char *s, int i)
 	return (c);
 }
 
-static	int		specstrlen(char *s, t_env *env, t_config *cnf)
+int					specstrlen(char *s, t_env *env, t_config *cnf)
 {
-	int i;
-	int count;
-	char *ss;
+	int		i;
+	int		count;
+	char	*ss;
 	int		eq;
 
 	i = 0;
@@ -85,7 +85,8 @@ static	int		specstrlen(char *s, t_env *env, t_config *cnf)
 			else
 				eq = 0;
 		}
-		if ((s[i] != '$') || (i != 0 && s[i] == '$' && s[i - 1] == '\\') || (s[i] == '$' && eq == 1))
+		if ((s[i] != '$') || (i != 0 && s[i] == '$' && s[i - 1] == '\\')
+			|| (s[i] == '$' && eq == 1))
 			count++;
 		else if (s[i] == '$' && eq != 1)
 		{
@@ -113,7 +114,7 @@ static	int		specstrlen(char *s, t_env *env, t_config *cnf)
 	return (count);
 }
 
-static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
+int					ptenv(char *str, t_env *env, int i, char *s, int k)
 {
 	t_env	*e;
 	int		j;
@@ -126,7 +127,7 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 	while (str[j])
 	{
 		if (str[j] == ' ' || str[j] == '\"')
-			break;
+			break ;
 		j++;
 	}
 	tmp = malloc(sizeof(char) * (j - i) + 1);
@@ -140,7 +141,7 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 	while (e)
 	{
 		if (!(ft_strcmp(tmp, e->key)))
-			break;
+			break ;
 		e = e->next;
 	}
 	j = 0;
@@ -157,17 +158,15 @@ static	int		ptenv(char *str, t_env *env, int i, char *s, int k)
 	else if (k == 1 && e)
 		return (k);
 	else
-		//return (k - 1);
 		return (k);
 }
 
-char	*getstr(t_arg *arg, t_env *env, t_config *cnf)
+char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
 {
 	char	*ret;
 	int		len;
 	int		i;
 	int		j;
-
 	char	*ss;
 	int		k;
 	int		eq;
@@ -204,9 +203,11 @@ char	*getstr(t_arg *arg, t_env *env, t_config *cnf)
 			else
 				eq = 0;
 		}
-		if (((arg->sarg[i] != '$') || (i != 0 && arg->sarg[i] == '$' && arg->sarg[i - 1] == '\\')) || eq == 1)
+		if (((arg->sarg[i] != '$') || (i != 0 && arg->sarg[i] == '$'
+			&& arg->sarg[i - 1] == '\\')) || eq == 1)
 			ret[j] = arg->sarg[i];
-		if ((i == 0 && arg->sarg[i] == '\\' && eq == 0) || (i != 0 && (arg->sarg[i] == '\\' && arg->sarg[i - 1] != '\\') && eq == 0))
+		if ((i == 0 && arg->sarg[i] == '\\' && eq == 0) || (i != 0 &&
+			(arg->sarg[i] == '\\' && arg->sarg[i - 1] != '\\') && eq == 0))
 			j--;
 		if ((arg->sarg[i] == '\'' || arg->sarg[i] == '\"') && eq == 0)
 		{
@@ -223,7 +224,8 @@ char	*getstr(t_arg *arg, t_env *env, t_config *cnf)
 			if (i != 0 && arg->sarg[i - 1] != '\\')
 				j--;
 		}
-		if ((arg->sarg[i] == '$' && eq == 2) || (arg->sarg[i] == '$' && eq == 0))
+		if ((arg->sarg[i] == '$' && eq == 2)
+			|| (arg->sarg[i] == '$' && eq == 0))
 		{
 			if (arg->sarg[i + 1] && arg->sarg[i + 1] == '?')
 			{
@@ -255,9 +257,9 @@ char	*getstr(t_arg *arg, t_env *env, t_config *cnf)
 	return (ret);
 }
 
-static	char	*namefunc(t_config *cnf, t_tok *pnt, int len)
+static	char		*namefunc(t_config *cnf, t_tok *pnt, int len)
 {
-	t_env *env;
+	t_env	*env;
 	char	*ret;
 	int		i;
 	int		j;
@@ -305,7 +307,7 @@ static	char	*namefunc(t_config *cnf, t_tok *pnt, int len)
 	return (ret);
 }
 
-static	char	*func(t_tok *pnt, t_config *cnf)
+static	char		*func(t_tok *pnt, t_config *cnf)
 {
 	int		len;
 	t_arg	*args;
@@ -326,13 +328,13 @@ static	char	*func(t_tok *pnt, t_config *cnf)
 		free(args->sarg);
 		free(args);
 		if (pnt->qfunc == 1)
-			return(ft_strdup(pnt->func));
+			return (ft_strdup(pnt->func));
 	}
 	ret = namefunc(cnf, pnt, len);
 	return (ret);
 }
 
-char	*getname(t_config *cnf, t_tok *pnt)
+char				*getname(t_config *cnf, t_tok *pnt)
 {
 	char	*ret;
 	int		i;

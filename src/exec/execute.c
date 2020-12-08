@@ -12,30 +12,30 @@
 
 #include "../../include/minishell.h"
 
-static	char	*srchpth(char *pb, char *func)
+static	char		*srchpth(char *pb, char *func)
 {
-	DIR		*cat;
-	struct dirent *rec;
-	char	*allp;
-	char	*tmp;
+	DIR				*cat;
+	struct dirent	*rec;
+	char			*allp;
+	char			*tmp;
 
 	allp = NULL;
 	if (!(cat = opendir(pb)))
 		return (NULL);
 	while ((rec = readdir(cat)) != NULL)
 	{
-			if(!(ft_strcmp(rec->d_name, func)))
-			{
-				tmp = ft_strjoin(pb, "/");
-				allp = ft_strjoin(tmp, rec->d_name);
-				free(tmp);
-			}
+		if (!(ft_strcmp(rec->d_name, func)))
+		{
+			tmp = ft_strjoin(pb, "/");
+			allp = ft_strjoin(tmp, rec->d_name);
+			free(tmp);
+		}
 	}
 	closedir(cat);
 	return (allp);
 }
 
-static	int		errs(char *p, char *func)
+static	int			errs(char *p, char *func)
 {
 	int fd;
 	int status;
@@ -58,13 +58,17 @@ static	int		errs(char *p, char *func)
 		ft_putendl_fd(": \e[1;38;5;202mis a directory\e[0m", 2);
 	else if (fd > -1 && !cat)
 		ft_putendl_fd(": \e[1;38;5;202mPermission denied\e[0m", 2);
+	if ((!p || ft_strchr(p, '/') == NULL) || (fd == -1 && cat == NULL))
+		status = 127;
+	else
+		status = 126;
 	if (cat)
 		closedir(cat);
 	closefd(fd);
 	return (status);
 }
 
-static	int		bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
+static	int			bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
 {
 	int status;
 
@@ -79,10 +83,11 @@ static	int		bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
 	}
 	else
 		waitpid(cnf->pid, &status, 0);
+	status = (status == 32256 || status == 32512) ? status / 256 : !!status;
 	return (status);
 }
 
-static int		is_absolute_path(char *path)
+static int			is_absolute_path(char *path)
 {
 	struct stat	s;
 
@@ -91,37 +96,35 @@ static int		is_absolute_path(char *path)
 	return (0);
 }
 
-int		goexec(t_config *cnf, t_tok *pnt, char **targ)
+int					goexec(t_config *cnf, t_tok *pnt, char **targ)
 {
-	int	status;
-	int	i;
+	int		status;
+	int		i;
 	char	*p;
-	char **tp;
-	t_env *env;
-	
+	char	**tp;
+	t_env	*env;
+
 	i = 0;
 	p = NULL;
 	env = cnf->envl;
 	status = 127;
-	if (is_absolute_path(targ[0]))
-		status = bin(targ[0], targ, cnf, pnt);
-	else
+	while (env && env->key && ft_strcmp(env->key, "PATH"))
+		env = env->next;
+	if (env != NULL)
 	{
-		while(env && env->key && ft_strcmp(env->key, "PATH"))
-			env = env->next;
-		if (env == NULL)
-			return (bin(p, targ, cnf, pnt));
 		tp = ft_split(env->value, ':');
 		if (!(pnt->func) && !tp[0])
 			return (1);
 		while (pnt->func && tp[i] && p == NULL)
 			p = srchpth(tp[i++], pnt->func);
-		if (p != NULL)
-			status = bin(p, targ, cnf, pnt);
-		else
-			status = bin(p, targ, cnf, pnt);
-		free(p);
-		tf(tp);
 	}
+	if (is_absolute_path(targ[0]) && !p)
+		status = bin(targ[0], targ, cnf, pnt);
+	if (p != NULL)
+		status = bin(p, targ, cnf, pnt);
+	else
+		status = bin(p, targ, cnf, pnt);
+	free(p);
+	tf(tp);
 	return (status);
 }
