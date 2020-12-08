@@ -31,7 +31,7 @@ static	void	inclvl(t_config *cnf)
 
 }
 
-static	void	envtolist(t_config *cnf, char **env)
+void	envtolist(t_config *cnf, char **env)
 {
 	t_env	*next;
 	t_env	*list;

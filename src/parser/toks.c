@@ -16,24 +16,42 @@ static	int		funcname(char *line, int i, t_tok *tok)
 {
 	int		endn;
 	int		j;
-	int		oq;
+	int		eq;
 	
 	endn = 0;
 	j = i;
-	oq = 0;
+	eq = 0;
 	while (line[j])
 	{
-		if (line[i] == '\'' && oq == 0)
-			oq = 1;
-		if (line[i] == '\"' && oq == 0)
-			oq = 2;
-		if (line[i] == '\'' && oq == 1)
-			oq = 0;
-		if (line[i] == '\"' && oq == 2)
-			oq = 0;
-		if (oq == 0 && (line[j] == ' ' || line[j] == '|' || line[j] == ';'))
-			break;
-		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
+		if ((line[j] == '\'' && eq == 0))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 0;
+			else
+				eq = 1;
+		}
+		else if ((line[j] == '\"' && eq == 0))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 0;
+			else
+				eq = 2;
+		}
+		else if ((line[j] == '\'' && eq == 1))
+			eq = 0;
+		else if ((line[j] == '\"' && eq == 2))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 2;
+			else
+				eq = 0;
+		}
+		if (eq == 0 && issep(line[j]))
+		{
+			if (j == 0 || (j > 0 && line[j - 1] != '\\'))
+				break;
+		}
+		if (eq == 0 && (line[j] == '\''|| line[j] == '\"'))
 			endn--;
 		endn++;
 		j++;
@@ -43,17 +61,51 @@ static	int		funcname(char *line, int i, t_tok *tok)
 	endn = 0;
 	while (line[i] && i < j)
 	{
-		if (line[i] == '\'' && oq == 0)
-			oq = 1;
-		if (line[i] == '\"' && oq == 0)
-			oq = 2;
-		if (line[i] == '\'' && oq == 1)
-			oq = 0;
-		if (line[i] == '\"' && oq == 2)
-			oq = 0;
+		if ((line[i] == '\'' && eq == 0))
+		{
+			if (i > 0 && line[i - 1] == '\\')
+				eq = 0;
+			else
+				eq = 1;
+		}
+		else if ((line[i] == '\"' && eq == 0))
+		{
+			if (i > 0 && line[i - 1] == '\\')
+				eq = 0;
+			else
+				eq = 2;
+		}
+		else if ((line[i] == '\'' && eq == 1))
+			eq = 0;
+		else if ((line[i] == '\"' && eq == 2))
+		{
+			if (j > 0 && line[i - 1] == '\\')
+				eq = 2;
+			else
+				eq = 0;
+		}
 		tok->func[endn] = line[i];
-		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
+		if ((i == 0 && line[i] == '\\' && eq == 0) || (i != 0 && (line[i] == '\\' && line[i - 1] != '\\') && eq == 0))
 			endn--;
+		if ((line[i] == '\'' || line[i] == '\"') && eq == 0)
+		{
+			if (i != 0 && line[i - 1] != '\\')
+				endn--;
+		}
+		if (line[i] == '\'' && eq == 1)
+		{
+			if (i != 0 && line[i - 1] != '\\')
+				endn--;
+			else if (i == 0)
+				endn--;
+		}
+		if (line[i] == '\"' && eq == 2)
+		{
+			if (i != 0 && line[i - 1] != '\\')
+				endn--;
+			else if (i == 0)
+				endn--;
+		}
 		i++;
 		endn++;
 	}
@@ -92,11 +144,33 @@ static	t_arg	*getarg(char *line, int *i)
 	while (line[j])
 	{
 		if (issep(line[j]) && eq == 0)
-			break;
-		if ((line[j] == '\'' && eq == 1))
+		{
+			if (j == 0 || (j > 0 && line[j - 1] != '\\'))
+				break;
+		}
+		if ((line[j] == '\'' && eq == 0))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 0;
+			else
+				eq = 1;
+		}
+		else if ((line[j] == '\"' && eq == 0))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 0;
+			else
+				eq = 2;
+		}
+		else if ((line[j] == '\'' && eq == 1))
 			eq = 0;
-		if ((line[j] == '\"' && eq == 2))
-			eq = 0;
+		else if ((line[j] == '\"' && eq == 2))
+		{
+			if (j > 0 && line[j - 1] == '\\')
+				eq = 2;
+			else
+				eq = 0;
+		}
 		if (eq == 0 && isredir(line[j]))
 			break ;
 		arglen++;
@@ -131,7 +205,7 @@ static	int		args(char *line, int i, t_tok *tok)
 	while (line[i])
 	{
 		i = ft_skipspace(line, i);
-		if (line[i] == '\0' || issep(line[i]))
+		if (line[i] == '\0' || (issep(line[i]) && line[i - 1] != '\\'))
 			break;
 		if (isredir(line[i]))
 			i = addredir(tok, i, line);
@@ -161,21 +235,29 @@ static	t_tok	*newtok(char *line, int *i)
 	tok->next = NULL;
 	tok->prdir = NULL;
 	tok->ndir = NULL;
+	if (isredir(line[*i]))
+		*i = addredir(tok, *i, line);
 	if ((*i = funcname(line, *i, tok)) < 0)
 		return (NULL);
 	while (line[*i])
 	{
 		*i = ft_skipspace(line, *i);
 		if (issep(line[*i]))
-			break;
+		{
+			if (*i== 0 || (*i > 0 && line[*i - 1] != '\\'))
+				break;
+		}
 		if ((*i = redir(line, *i, tok)) < 0)
 			return (NULL);
-		if (line[*i] == ';' || line[*i] == '|')
+		if ((line[*i] == ';' && line[*i - 1] != '\\') || (line[*i] == '|' && line[*i - 1] != '\\'))
 			break;
 		if ((*i = args(line, *i, tok)) < 0)
 			return (NULL);
 		if (issep(line[*i]))
-			break;
+		{
+			if (*i== 0 || (*i > 0 && line[*i - 1] != '\\'))
+				break;
+		}
 	}
 	return (tok);
 }

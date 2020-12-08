@@ -47,7 +47,8 @@ t_tok		*gopipe(t_tok *pnt, t_config *cnf)
 	cnf->pipe.cp = cpipes(pnt);
 	cnf->pipe.pid = malloc(sizeof(pid_t) * cnf->pipe.cp);
 	ons(cnf);
-	cnf->pipe.pipefd = malloc(sizeof(int*) * cnf->pipe.cp);
+	cnf->pipe.pipefd = malloc(sizeof(int*) * (cnf->pipe.cp + 1));
+	cnf->pipe.pipefd[cnf->pipe.cp] = NULL;
 	while (i < cnf->pipe.cp)
 	{
 		cnf->pipe.pipefd[i] = malloc(sizeof(int) * 2);
@@ -59,7 +60,6 @@ t_tok		*gopipe(t_tok *pnt, t_config *cnf)
 	while (i < cnf->pipe.cp)
 	{
 		cnf->pipe.i = i;
-		//printf("arg %s : %s\n\n",pnt->func,pnt->arg->sarg);
 		pipe(cnf->pipe.pipefd[i]);
 		cnf->pipe.pid[i] = fork();
 		if (cnf->pipe.pid[i] == 0)
@@ -68,11 +68,7 @@ t_tok		*gopipe(t_tok *pnt, t_config *cnf)
 			dup2(cnf->pipe.pipefd[i][0], 0);
 			cnf->pipein = cnf->pipe.pipefd[i][0];
 			pnt = pnt->next;
-			if (cnf->pipe.cp == 1)
-				cnf->child = 1;
-			//pipedir(pnt, cnf);
-			//cnf->child = 2;
-			//dup2(cnf->out, 1);
+			cnf->child = 1;
 		}
 		else
 		{

@@ -12,6 +12,21 @@
 
 #include "../../include/minishell.h"
 
+void	tif(int	**tab)
+{
+	int	i;
+
+	i = 0;
+	if (!tab)
+		return ;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
 void	tf(char **tab)
 {
 	int	i;
@@ -59,4 +74,21 @@ int		lenenv(t_env *env)
 		i++;
 	}
 	return (i);
+}
+
+t_env		*freeenv(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env)
+	{
+		tmp = env;
+		if (env->key)
+			free(env->key);
+		if (env->value)
+			free(env->value);
+		env = env->next;
+		free(tmp);
+	}
+	return (env);
 }

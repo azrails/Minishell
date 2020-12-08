@@ -33,7 +33,7 @@ static	char	**argtomatrix(t_tok *pnt, t_config *cnf)
 	tmp = pnt->arg;
 	while (tmp && i < j + 1)
 	{
-		args[i] = getstr(tmp, cnf->envl);
+		args[i] = getstr(tmp, cnf->envl, cnf);
 		if (!args[i] || !args[i][0])
 			i--;
 		i++;
@@ -50,7 +50,6 @@ static	void	preex(t_config *cnf, t_tok *pnt)
 
 	i = 0;
 	targ = NULL;
-	//printf("arg preex %s : %s : %d : %d\n\n",pnt->func, pnt->arg->sarg, cnf->pipe.i, cnf->pipe.pid[cnf->pipe.i]);
 	targ = argtomatrix(pnt, cnf);
 	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && (cnf->pipe.cp != 0 && cnf->pipe.i == 0))
 		cnf->err = 2;
@@ -138,8 +137,9 @@ void	exec(t_config *cnf)
 		savefd(cnf);
 		closefds(cnf);
 		resetfds(cnf);
-		//printf("%d : %d\n",cnf->pipe.pid[cnf->pipe.i],cnf->pipe.i);
-		//printf("%d\n",cnf->pipe.pid[cnf->pipe.i]);
+		if (cnf->pipe.cp != 0 && ((cnf->pipe.i != 0 &&
+			cnf->pipe.pid[cnf->pipe.i - 1] == 0) || cnf->pipe.pid[cnf->pipe.i] == 0))
+			exit(cnf->excode);
 		if (cnf->pipe.cp != 0)
 		{
 			waitpid(-1, &status, 0);
@@ -153,6 +153,13 @@ void	exec(t_config *cnf)
 			pnt = pnt->next;
 			i++;
 		}
+		if (cnf->pipe.cp)
+		{
+			tif(cnf->pipe.pipefd);
+			free(cnf->pipe.pid);
+		}
+		cnf->envl = freeenv(cnf->envl);
+		envtolist(cnf, cnf->env);
 		pnt = pnt->next;
 	}
 }

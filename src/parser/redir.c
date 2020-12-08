@@ -33,20 +33,35 @@ static	int		typedir(char *line, int i)
 	return (type);
 }
 
-static	int		checkq(char c, int oq)
+int		checkq(char *line, int i, int eq)
 {
-	if (c == '\'' && oq == 0)
-			oq = 1;
-	if (c == '\"' && oq == 0)
-			oq = 2;
-	if (c == '\'' && oq == 1)
-			oq = 0;
-	if (c == '\"' && oq == 2)
-			oq = 0;
-	return (oq);
+	if ((line[i] == '\'' && eq == 0))
+		{
+			if (i > 0 && line[i - 1] == '\\')
+				eq = 0;
+			else
+				eq = 1;
+		}
+		else if ((line[i] == '\"' && eq == 0))
+		{
+			if (i > 0 && line[i - 1] == '\\')
+				eq = 0;
+			else
+				eq = 2;
+		}
+		else if ((line[i] == '\'' && eq == 1))
+			eq = 0;
+		else if ((line[i] == '\"' && eq == 2))
+		{
+			if (i > 0 && line[i - 1] == '\\')
+				eq = 2;
+			else
+				eq = 0;
+		}
+	return (eq);
 }
 
-static	int getpth(t_rdir *tmp, char *line, int i)
+int getpth(t_rdir *tmp, char *line, int i)
 {
 	int j;
 	int	oq;
@@ -58,8 +73,8 @@ static	int getpth(t_rdir *tmp, char *line, int i)
 	j = i;
 	while (line[j])
 	{
-		oq = checkq(line[j], oq);
-		if ((oq == 0 && line[j] == ' ') || (oq == 0  && line[j] == '|' ) || (oq == 0 && line[j] == ';'))
+		oq = checkq(line, j, oq);
+		if (oq == 0 && issep(line[j]))
 			break;
 		if (oq == 0 && (line[i] == '\''|| line[i] == '\"'))
 			count--;
@@ -70,7 +85,7 @@ static	int getpth(t_rdir *tmp, char *line, int i)
 	count = 0;
 	while (line[i] && i < j)
 	{
-		oq = checkq(line[j], oq);
+		oq = checkq(line, i, oq);
 		tmp->prdir[count] = line[i];
 		if (oq == 0 && (line[i] == '\''||line[i] == '\"'))
 			count--;

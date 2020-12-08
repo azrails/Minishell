@@ -106,7 +106,7 @@ void	resfds(t_config *cnf);
 int		countargs(t_arg *arg);
 void	init(t_config *cnf, char **env);
 int		lenenv(t_env *env);
-char	*getstr(t_arg *arg, t_env *env);
+char	*getstr(t_arg *arg, t_env *env, t_config *cnf);
 int		goexec(t_config *cnf, t_tok *pnt, char **targ);
 void	tf(char **tab);
 int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ);
@@ -123,4 +123,9 @@ int		isredir(char c);
 int		addredir(t_tok *tok, int i, char *line);
 t_tok		*gopipe(t_tok *pnt, t_config *cnf);
 int		pipedir(t_tok *pnt, t_config *cnf);
+void	tif(int	**tab);
+t_env		*freeenv(t_env *env);
+void	envtolist(t_config *cnf, char **env);
+int getpth(t_rdir *tmp, char *line, int i);
+int		checkq(char *line, int i, int eq);
 # endif

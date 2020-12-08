@@ -87,7 +87,6 @@ int		skipsep(t_tok *tok, char *line, int i)
 
 int		redir(char *line, int i, t_tok *tok)
 {
-	tok->rdir = 0;
 	if (line[i] == '<')
 	{
 		tok->rdir = 1;
