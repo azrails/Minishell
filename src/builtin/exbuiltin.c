@@ -37,15 +37,15 @@ int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ)
 		cnf->excode = ft_echo(targ);
 	if (!ft_strcmp(pnt->func, "pwd"))
 		cnf->excode = ft_pwd();
-/*	if (!ft_strcmp(pnt->func, "export"))
+	if (!ft_strcmp(pnt->func, "export"))
 	{
-		if (targ && targ[1] && !targ[2])
-			cnf->excode = ft_export(1 ,targ ,cnf->env);//не знаю 1 аргумент
-		else if (targ && targ[1] && targ[2])
-			cnf->excode = ft_export(2 ,targ ,cnf->env);
-	}*/
-	//if (!ft_strcmp(pnt->func, "unset"))
-	//	cnf->excode = ft_unset(targ, cnf->envl);//лист??
+		//if (targ && targ[1] && !targ[2])
+			//cnf->excode = ft_export(targ ,cnf->env);
+		//else if (targ && targ[1] && targ[2])
+			cnf->excode = ft_export(targ, cnf->env);
+	}
+	if (!ft_strcmp(pnt->func, "unset"))
+		cnf->excode = ft_unset(targ, cnf->env);
 	if (!ft_strcmp(pnt->func, "env"))
 		cnf->excode = ft_env(cnf->env);
 	return (0);

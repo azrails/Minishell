@@ -41,11 +41,13 @@ void		remove_env(t_list *env_list, t_list *prev_element)
 	}
 }
 
-int			ft_unset(char **argv, t_list *env_list)
+int			ft_unset(char **argv, char **environ)
 {
+	t_list	*env_list;
 	t_list	*prev_element;
 	t_env	*current_env;
 
+	env_list = list_from_environ(environ);
 	while (*argv)
 	{
 		prev_element = NULL;

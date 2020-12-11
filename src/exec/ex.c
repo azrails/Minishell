@@ -12,302 +12,61 @@
 
 #include "../../include/minishell.h"
 
-static	int			countenv(t_env *env, char *s, int i)
+static	void			cle(char *tm, char *str, t_tmp *tmp, int j)
 {
-	int		j;
-	int		c;
-	char	*tmp;
-	t_env	*e;
+	int c;
 
 	c = 0;
-	e = env;
-	j = i;
-	while (s[j])
+	while (tmp->i < j)
 	{
-		if (s[j] == ' ' || s[j] == '\"')
-			break ;
-		j++;
-	}
-	tmp = malloc(sizeof(char) * (j - i) + 1);
-	while (i < j)
-	{
-		tmp[c] = s[i];
-		i++;
+		tm[c] = str[tmp->i];
+		tmp->i++;
 		c++;
 	}
-	tmp[c] = 0;
-	while (e)
-	{
-		if (!(ft_strcmp(tmp, e->key)))
-			break ;
-		e = e->next;
-	}
-	c = 0;
-	if (e)
-		c = ft_strlen(e->value);
-	if (tmp)
-		free(tmp);
-	return (c);
+	tm[c] = 0;
 }
 
-int					specstrlen(char *s, t_env *env, t_config *cnf)
+static	void			envp(t_env *e, char *s, t_tmp *tmp)
 {
-	int		i;
-	int		count;
-	char	*ss;
-	int		eq;
+	int j;
 
-	i = 0;
-	count = 0;
-	eq = 0;
-	while (s[i])
-	{
-		if ((s[i] == '\'' && eq == 0))
-		{
-			if (i > 0 && s[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 1;
-		}
-		else if ((s[i] == '\"' && eq == 0))
-		{
-			if (i > 0 && s[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 2;
-		}
-		else if ((s[i] == '\'' && eq == 1))
-			eq = 0;
-		else if ((s[i] == '\"' && eq == 2))
-		{
-			if (i > 0 && s[i - 1] == '\\')
-				eq = 2;
-			else
-				eq = 0;
-		}
-		if ((s[i] != '$') || (i != 0 && s[i] == '$' && s[i - 1] == '\\')
-			|| (s[i] == '$' && eq == 1))
-			count++;
-		else if (s[i] == '$' && eq != 1)
-		{
-			if (s[i + 1] && s[i + 1] == '?')
-			{
-				ss = ft_itoa(cnf->excode);
-				count += ft_strlen(ss);
-				free(ss);
-				i += 2;
-				if (s[i] == '\0')
-					break ;
-			}
-			else
-			{
-				count += countenv(env, s, ++i);
-				while (s[i] && s[i] != ' ')
-					i++;
-				if (s[i] == '\0')
-					break ;
-				i--;
-			}
-		}
-		i++;
-	}
-	return (count);
-}
-
-int					ptenv(char *str, t_env *env, int i, char *s, int k)
-{
-	t_env	*e;
-	int		j;
-	char	*tmp;
-	int		c;
-
-	c = 0;
-	j = i;
-	e = env;
-	while (str[j])
-	{
-		if (str[j] == ' ' || str[j] == '\"')
-			break ;
-		j++;
-	}
-	tmp = malloc(sizeof(char) * (j - i) + 1);
-	while (i < j)
-	{
-		tmp[c] = str[i];
-		i++;
-		c++;
-	}
-	tmp[c] = 0;
-	while (e)
-	{
-		if (!(ft_strcmp(tmp, e->key)))
-			break ;
-		e = e->next;
-	}
 	j = 0;
 	while (e && e->value[j])
 	{
-		s[k] = e->value[j];
-		k++;
+		s[tmp->j] = e->value[j];
+		tmp->j++;
 		j++;
 	}
-	if (tmp)
-		free(tmp);
-	if (k == 0 && !e)
-		return (k);
-	else if (k == 1 && e)
-		return (k);
-	else
-		return (k);
 }
 
-char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
+void					ptenv(char *str, t_env *env, t_tmp *tmp, char *s)
 {
-	char	*ret;
-	int		len;
-	int		i;
+	t_env	*e;
 	int		j;
-	char	*ss;
-	int		k;
-	int		eq;
+	char	*tm;
 
-	i = 0;
-	j = 0;
-	eq = 0;
-	len = specstrlen(arg->sarg, env, cnf);
-	if (!(ret = malloc(sizeof(char) * len + 1)))
-		return (NULL);
-	while (arg->sarg[i])
+	j = tmp->i;
+	e = env;
+	while (str[j])
 	{
-		k = 0;
-		if ((arg->sarg[i] == '\'' && eq == 0))
-		{
-			if (i > 0 && arg->sarg[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 1;
-		}
-		else if ((arg->sarg[i] == '\"' && eq == 0))
-		{
-			if (i > 0 && arg->sarg[i - 1] == '\\')
-				eq = 0;
-			else
-				eq = 2;
-		}
-		else if ((arg->sarg[i] == '\'' && eq == 1))
-			eq = 0;
-		else if ((arg->sarg[i] == '\"' && eq == 2))
-		{
-			if (i > 0 && arg->sarg[i - 1] == '\\')
-				eq = 2;
-			else
-				eq = 0;
-		}
-		if (((arg->sarg[i] != '$') || (i != 0 && arg->sarg[i] == '$'
-			&& arg->sarg[i - 1] == '\\')) || eq == 1)
-			ret[j] = arg->sarg[i];
-		if ((i == 0 && arg->sarg[i] == '\\' && eq == 0) || (i != 0 &&
-			(arg->sarg[i] == '\\' && arg->sarg[i - 1] != '\\') && eq == 0))
-			j--;
-		if ((arg->sarg[i] == '\'' || arg->sarg[i] == '\"') && eq == 0)
-		{
-			if (i != 0 && arg->sarg[i - 1] != '\\')
-				j--;
-		}
-		if (arg->sarg[i] == '\'' && eq == 1)
-		{
-			if (i != 0 && arg->sarg[i - 1] != '\\')
-				j--;
-		}
-		if (arg->sarg[i] == '\"' && eq == 2)
-		{
-			if (i != 0 && arg->sarg[i - 1] != '\\')
-				j--;
-		}
-		if ((arg->sarg[i] == '$' && eq == 2)
-			|| (arg->sarg[i] == '$' && eq == 0))
-		{
-			if (arg->sarg[i + 1] && arg->sarg[i + 1] == '?')
-			{
-				ss = ft_itoa(cnf->excode);
-				while (ss[k])
-				{
-					ret[j] = ss[k];
-					j++;
-					k++;
-				}
-				j--;
-				i++;
-				free(ss);
-			}
-			else
-			{
-				j = ptenv(arg->sarg, env, ++i, ret, j);
-				while (arg->sarg[i] && arg->sarg[i] != ' ')
-					i++;
-				if (arg->sarg[i] == '\0')
-					break ;
-				i--;
-			}
-		}
+		if (str[j] == ' ' || str[j] == '\"' || str[j] == '\'' || str[j] == '\\')
+			break ;
 		j++;
-		i++;
 	}
-	ret[j] = 0;
-	return (ret);
+	tm = malloc(sizeof(char) * (j - tmp->i) + 1);
+	cle(tm, str, tmp, j);
+	while (e)
+	{
+		if (!(ft_strcmp(tm, e->key)))
+			break ;
+		e = e->next;
+	}
+	envp(e, s, tmp);
+	if (tm)
+		free(tm);
 }
 
-static	char		*namefunc(t_config *cnf, t_tok *pnt, int len)
-{
-	t_env	*env;
-	char	*ret;
-	int		i;
-	int		j;
-	char	*ss;
-	int		k;
-
-	i = 0;
-	j = 0;
-	env = cnf->envl;
-	ret = malloc(sizeof(char) * len + 1);
-	while (pnt->func[i])
-	{
-		k = 0;
-		if (((pnt->func[i] != '$') || (i != 0 && pnt->func[i] == '$' && pnt->func[i - 1] == '\\')))
-			ret[j] = pnt->func[i];
-		else if (pnt->func[i] == '$')
-		{
-			if (pnt->func[i + 1] && pnt->func[i + 1] == '?')
-			{
-				ss = ft_itoa(cnf->excode);
-				while (ss[k])
-				{
-					ret[j] = ss[k];
-					j++;
-					k++;
-				}
-				j--;
-				i++;
-				free(ss);
-			}
-			else
-			{
-				j = ptenv(pnt->func, env, ++i, ret, j);
-				while (pnt->func[i] && pnt->func[i] != ' ')
-					i++;
-				if (pnt->func[i] == '\0')
-					break ;
-				i--;
-			}
-		}
-		j++;
-		i++;
-	}
-	ret[j] = 0;
-	return (ret);
-}
-
-static	char		*func(t_tok *pnt, t_config *cnf)
+static	char			*func(t_tok *pnt, t_config *cnf)
 {
 	int		len;
 	t_arg	*args;
@@ -334,7 +93,7 @@ static	char		*func(t_tok *pnt, t_config *cnf)
 	return (ret);
 }
 
-char				*getname(t_config *cnf, t_tok *pnt)
+char					*getname(t_config *cnf, t_tok *pnt)
 {
 	char	*ret;
 	int		i;

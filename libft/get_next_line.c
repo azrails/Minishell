@@ -12,78 +12,115 @@
 
 #include "get_next_line.h"
 
-int		result(int bytes, char *nptr)
+static	int		newline(char *tail, int bytes)
 {
-	if (bytes == -1)
+	int i;
+
+	i = 0;
+	if (bytes == 0 && tail && tail[0] == '\0')
 		return (-1);
-	if (nptr)
-		return (1);
+	if (bytes == 0 || tail == NULL)
+		return (0);
+	while (tail[i])
+	{
+		if (tail[i] == '\n')
+			return (1);
+		i++;
+	}
 	return (0);
 }
 
-void	copy_tail(char **tail, char **nptr)
+static	char	*concat(char *tail)
 {
-	char	*temp;
+	int		i;
+	char	*line;
 
-	**nptr = '\0';
-	temp = *tail;
-	*tail = ft_strdup(++*nptr);
-	free(temp);
+	i = 0;
+	while (tail && tail[i] && tail[i] != '\n')
+		i++;
+	if (!(line = malloc(sizeof(char) * i + 1)))
+	{
+		free(tail);
+		return (NULL);
+	}
+	i = 0;
+	while (tail && tail[i] && tail[i] != '\n')
+	{
+		line[i] = tail[i];
+		i++;
+	}
+	line[i] = 0;
+	return (line);
 }
 
-void	check_tail(char ***line, char **tail, char **nptr)
+static	void	put(char *ret, char *tail, char *buf)
 {
-	char	*temp;
+	int		i;
+	int		j;
 
-	if ((*nptr = ft_strchr(*tail, '\n')))
+	i = 0;
+	j = 0;
+	while (tail && tail[i])
+		ret[i++] = tail[j++];
+	j = 0;
+	while (buf[j])
 	{
-		**nptr = '\0';
-		temp = **line;
-		**line = ft_strjoin(**line, *tail);
-		free(temp);
-		temp = *tail;
-		*tail = ft_strdup(++*nptr);
-		free(temp);
+		ret[i] = buf[j];
+		j++;
+		i++;
 	}
-	else
-	{
-		temp = **line;
-		**line = ft_strjoin(**line, *tail);
-		free(temp);
-		temp = *tail;
-		*tail = NULL;
-		free(temp);
-	}
+	ret[i] = '\0';
 }
 
-int		get_next_line(int fd, char **line)
+static	char	*joinbuf(char *tail, char *buf)
+{
+	int		i;
+	int		j;
+	char	*ret;
+
+	i = 0;
+	j = 0;
+	while (tail && tail[i])
+		i++;
+	while (buf[j])
+		j++;
+	if (!(ret = malloc(sizeof(char) * (i + j + 1))))
+	{
+		if (tail)
+			free(tail);
+		return (NULL);
+	}
+	put(ret, tail, buf);
+	if (tail)
+		free(tail);
+	return (ret);
+}
+
+int				get_next_line(int fd, char **line)
 {
 	char			buf[BUFFER_SIZE + 1];
 	int				bytes;
 	static char		*tail;
-	char			*temp;
-	char			*nptr;
 
-	if (fd < 0 || !line || BUFFER_SIZE < 1 || !(*line = malloc(1)))
-		return (-1);
 	tail = NULL;
-	**line = 0;
-	nptr = NULL;
-	bytes = 0;
-	if (tail)
-		check_tail(&line, &tail, &nptr);
-	while (!nptr && (bytes = read(fd, buf, BUFFER_SIZE)) > 0)
+	if (fd < 0 || !line || BUFFER_SIZE < 1)
+		return (-1);
+	bytes = 1;
+	while (!(newline(tail, bytes)))
 	{
+		if ((bytes = read(fd, buf, BUFFER_SIZE)) < 0)
+			return (-1);
 		buf[bytes] = '\0';
-		if ((nptr = ft_strchr(buf, '\n')))
-		{
-			copy_tail(&tail, &nptr);
-		}
-		temp = *line;
-		*line = ft_strjoin(*line, buf);
-		free(temp);
+		if (!(tail = joinbuf(tail, buf)))
+			return (-1);
 	}
-	if (tail)
+	if (newline(tail, bytes) == -1 && (*line = tail))
+	{
 		free(tail);
-	return (result(bytes, nptr));
+		return (0);
+	}
+	if (!(*line = concat(tail)))
+		return (-1);
+	free(tail);
+	return (bytes == 0 ? 0 : 1);
 }

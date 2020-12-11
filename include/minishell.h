@@ -24,7 +24,15 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <errno.h>
+# include <limits.h>
 # include "../libft/libft.h"
+
+typedef	struct		s_tmp
+{
+	int				i;
+	int				j;
+	int				eq;
+}					t_tmp;
 
 typedef	struct		s_pipe
 {
@@ -73,7 +81,7 @@ typedef	struct		s_sig
 {
 	int				ctc;
 	int				cts;
-	int				ctd;
+	int				excode;
 }					t_sig;
 
 typedef	struct		s_config
@@ -95,56 +103,77 @@ typedef	struct		s_config
 	t_sig			sig;
 	t_tok			*tok;
 }					t_config;
-
-t_tok				*analys(char *line);
+/*
+**PARSER
+*/
+int					close_quote(char *line);
+int					checkunexp(t_config *cnf, char *line);
+int					issep(char c);
 int					skipsep(t_tok *tok, char *line, int i);
 int					redir(char *line, int i, t_tok *tok);
-int					issep(char c);
+void				init(t_config *cnf, char **env);
+void				envtolist(t_config *cnf, char **env);
+int					isredir(char c);
+int					checkq(char *line, int i, int eq);
+int					getpth(t_rdir *tmp, char *line, int i);
+int					addredir(t_tok *tok, int i, char *line);
+t_tok				*analys(char *line);
+t_arg				*getarg(char *line, int *i);
+int					funcname(char *line, int i, t_tok *tok);
+void				freeenvl(t_env *env);
+void				freetok(t_tok *tok);
+int					specstrlenn(char *s, t_env *env, t_config *cnf);
+/*
+**EXIT
+*/
+void				ft_exit(t_config *cnf, char **targ);
+/*
+**EXECUTE
+*/
+char				*getname(t_config *cnf, t_tok *pnt);
+void				ptenv(char *str, t_env *env, t_tmp *tmp, char *s);
+int					specstrlen(char *s, t_env *env, t_config *cnf);
+char				*namefunc(t_config *cnf, t_tok *pnt, int len);
+char				*getstr(t_arg *arg, t_env *env, t_config *cnf);
+char				*gettruepth(char *str, t_env *env, t_config *cnf);
+int					pipedir(t_tok *pnt, t_config *cnf);
 void				exec(t_config *cnf);
+void				preex(t_config *cnf, t_tok *pnt);
+int					goexec(t_config *cnf, t_tok *pnt, char **targ);
+int					bin(char *p, char **targ, t_config *cnf, t_tok *pnt);
+t_tok				*gopipe(t_tok *pnt, t_config *cnf);
+void				intil(t_config *cnf, t_tok *pnt);
 int					inp(t_config *cnf, t_tok *pnt);
 int					dir(t_config *cnf, t_tok *pnt);
-void				resfds(t_config *cnf);
-int					countargs(t_arg *arg);
-void				init(t_config *cnf, char **env);
-int					lenenv(t_env *env);
-char				*getstr(t_arg *arg, t_env *env, t_config *cnf);
-int					goexec(t_config *cnf, t_tok *pnt, char **targ);
+void				tif(int	**tab);
 void				tf(char **tab);
-int					gobuiltin(t_config *cnf, t_tok *pnt, char **targ);
-int					isbuilt(char *name);
+int					countargs(t_arg *arg);
+int					lenenv(t_env *env);
+t_env				*freeenv(t_env *env);
+/*
+**FDS
+*/
+void				savefd(t_config *cnf);
 void				closefd(int fd);
 void				closefds(t_config *cnf);
 void				resetfds(t_config *cnf);
-void				savefd(t_config *cnf);
-void				freetok(t_tok *tok);
-void				freeenvl(t_env *env);
-void				ft_exit(t_config *cnf, char **targ);
-char				*getname(t_config *cnf, t_tok *pnt);
-int					isredir(char c);
-int					addredir(t_tok *tok, int i, char *line);
-t_tok				*gopipe(t_tok *pnt, t_config *cnf);
-int					pipedir(t_tok *pnt, t_config *cnf);
-void				tif(int	**tab);
-t_env				*freeenv(t_env *env);
-void				envtolist(t_config *cnf, char **env);
-int					getpth(t_rdir *tmp, char *line, int i);
-int					checkq(char *line, int i, int eq);
-char				*gettruepth(char *str, t_env *env, t_config *cnf);
-int					specstrlen(char *s, t_env *env, t_config *cnf);
-int					ptenv(char *str, t_env *env, int i, char *s, int k);
-int					specstrlenn(char *s, t_env *env, t_config *cnf);
+void				resfds(t_config *cnf);
 /*
 **BUILTINS
 */
+int					gobuiltin(t_config *cnf, t_tok *pnt, char **targ);
+int					isbuilt(char *name);
 int					ft_cd(char **argv, char **environ);
 int					ft_echo(char **argv);
 int					ft_env(char **environ);
-/*
-**int			ft_export(int argc, char **argv, char **environ);
-*/
+int					ft_export(char **argv, char **environ);
 int					ft_pwd(void);
-/*
-**int			ft_unset(char **argv, t_env *env_list);
-**int			compare_str(const char *s1, const char *s2);
-*/
+int					ft_unset(char **argv, char **environ);
+int					compare_str(const char *s1, const char *s2);
+t_list				*get_sorted_list(t_list *env_list);
+t_list				*list_from_environ(char **environ);
+void				add_env(t_list *env_list, t_env *env);
+t_env				*init_env(char **key_value);
+void				ft_signal(int signal);
+
 #endif

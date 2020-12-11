@@ -17,23 +17,36 @@ NAME = minishell
 LIBFT = -L libft -lft
 
 SRCS = src/parser/main.c \
+		src/parser/syntaxerr.c \
 		src/parser/toks.c \
+		src/parser/toks2.c \
 		src/parser/tool.c \
+		src/parser/tool2.c \
 		src/parser/env.c \
 		src/parser/redir.c \
 		src/exec/exec.c \
+		src/exec/hub.c \
+		src/exec/bin.c \
 		src/exec/redirect.c \
 		src/exec/tool.c \
 		src/exec/ex.c \
 		src/exec/fd.c \
 		src/exec/prerdir.c \
 		src/exec/pipe.c \
+		src/exec/pipe2.c \
 		src/exec/execute.c \
+		src/exec/speclen.c \
+		src/exec/funcname.c \
+		src/exec/string.c \
 		src/builtin/exbuiltin.c \
 		src/builtin/ft_cd.c \
 		src/builtin/ft_echo.c \
 		src/builtin/ft_env.c \
+		src/builtin/ft_env_utils.c \
+		src/builtin/ft_export.c \
+		src/builtin/ft_unset.c \
 		src/builtin/ft_pwd.c \
+		src/builtin/ft_signal.c \
 		src/exit/exit.c
 
 O = $(SRCS:.c=.o)

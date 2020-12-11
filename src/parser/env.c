@@ -30,6 +30,18 @@ static	void	inclvl(t_config *cnf)
 	tmp->value = ft_itoa(actlvl);
 }
 
+static	void	cl(t_config *cnf, t_env *list, char **env)
+{
+	char **tmp;
+
+	cnf->envl = list;
+	list->next = NULL;
+	tmp = ft_frstsplit(env[0], '=');
+	list->key = tmp[0];
+	list->value = tmp[1];
+	free(tmp);
+}
+
 void			envtolist(t_config *cnf, char **env)
 {
 	t_env	*next;
@@ -42,12 +54,7 @@ void			envtolist(t_config *cnf, char **env)
 		return ;
 	if (!(list = malloc(sizeof(t_env))))
 		return ;
-	cnf->envl = list;
-	list->next = NULL;
-	tmp = ft_frstsplit(env[0], '=');
-	list->key = tmp[0];
-	list->value = tmp[1];
-	free(tmp);
+	cl(cnf, list, env);
 	while (env && env[i])
 	{
 		if (!(next = malloc(sizeof(t_env))))

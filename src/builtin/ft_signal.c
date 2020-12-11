@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strrchr.c                                       :+:      :+:    :+:   */
+/*   ft_signal.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fdarrin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/05/23 20:23:17 by fdarrin           #+#    #+#             */
-/*   Updated: 2020/05/27 16:49:25 by fdarrin          ###   ########.fr       */
+/*   Created: 2020/12/02 17:44:08 by fdarrin           #+#    #+#             */
+/*   Updated: 2020/12/02 17:44:12 by fdarrin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../include/minishell.h"
 
-char	*ft_strrchr(const char *s, int c)
+void	ft_signal(int signal)
 {
-	int		len;
-	char	*str;
+	int		pid;
+	int		status;
 
-	len = ft_strlen(s);
-	str = (char*)s;
-	str += len;
-	while (len >= 0)
+	pid = waitpid(-1, &status, WNOHANG);
+	if (signal == SIGINT)
 	{
-		if (*str == (char)c)
-			return (str);
-		str--;
-		len--;
+		ft_putstr_fd("\b\b  \b\b", 2);
+		if (pid)
+			ft_putstr_fd("\n\e[1;38;5;47mminishell:\e[0m ", 2);
 	}
-	return (NULL);
+	if (signal == SIGQUIT)
+	{
+		if (!pid)
+			ft_putstr_fd("Quit: 3\n", 2);
+		else
+			ft_putstr_fd("\b\b  \b\b", 2);
+	}
 }

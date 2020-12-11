@@ -12,13 +12,6 @@
 
 #include "../../include/minishell.h"
 
-int				isredir(char c)
-{
-	if (c == '<' || c == '>')
-		return (1);
-	return (0);
-}
-
 static	int		typedir(char *line, int i)
 {
 	int	type;
@@ -61,6 +54,21 @@ int				checkq(char *line, int i, int eq)
 	return (eq);
 }
 
+static	int		in(char *line, int i, t_rdir *tmp, int j)
+{
+	int count;
+
+	count = 0;
+	while (line[i] && i < j)
+	{
+		tmp->prdir[count] = line[i];
+		count++;
+		i++;
+	}
+	tmp->prdir[count] = 0;
+	return (i);
+}
+
 int				getpth(t_rdir *tmp, char *line, int i)
 {
 	int j;
@@ -80,15 +88,7 @@ int				getpth(t_rdir *tmp, char *line, int i)
 		j++;
 	}
 	tmp->prdir = malloc(sizeof(char) * count + 1);
-	count = 0;
-	while (line[i] && i < j)
-	{
-		oq = checkq(line, i, oq);
-		tmp->prdir[count] = line[i];
-		count++;
-		i++;
-	}
-	tmp->prdir[count] = 0;
+	i = in(line, i, tmp, j);
 	return (i);
 }
 

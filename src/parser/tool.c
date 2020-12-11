@@ -19,6 +19,21 @@ int				issep(char c)
 	return (0);
 }
 
+static	int		in(char *line, int i, t_tok *tok, int j)
+{
+	int	count;
+
+	count = 0;
+	while (line[i] && i < j)
+	{
+		tok->prdir[count] = line[i];
+		count++;
+		i++;
+	}
+	tok->prdir[count] = 0;
+	return (i);
+}
+
 static	int		prdir(t_tok *tok, char *line, int i)
 {
 	int	j;
@@ -39,15 +54,7 @@ static	int		prdir(t_tok *tok, char *line, int i)
 	}
 	if (!(tok->prdir = malloc(sizeof(char) * count + 1)))
 		return (-1);
-	count = 0;
-	while (line[i] && i < j)
-	{
-		oq = checkq(line, i, oq);
-		tok->prdir[count] = line[i];
-		count++;
-		i++;
-	}
-	tok->prdir[count] = 0;
+	i = in(line, i, tok, j);
 	return (i);
 }
 
