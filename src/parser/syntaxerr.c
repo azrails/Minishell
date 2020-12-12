@@ -12,47 +12,57 @@
 
 #include "../../include/minishell.h"
 
-static	int		cq(char *line, int i, int type)
+static	int 	chckqte(char *line, int i, t_tmp *tmp, int type)
 {
-	if (line[i] == '\"' && type == 0)
+	if ((line[i] == '\'' && type == 0 && tmp->st == 0))
 	{
-		if (i > 0 && line[i - 1] == '\\')
-			type = 0;
-		else
-			type = 2;
+		tmp->st = 2;
+		type = 1;
 	}
-	else if (line[i] == '\"' && type == 2)
+	else if ((line[i] == '\"' && type == 0 && tmp->st == 0))
+		type = 2;
+	else if ((line[i] == '\'' && type == 1))
 	{
-		if (i > 0 && line[i - 1] == '\\')
-			type = 2;
-		else
-			type = 0;
+		tmp->st = 0;
+		type = 0;
 	}
+	else if ((line[i] == '\"' && type == 2 && tmp->st == 0))
+		type = 0;
 	return (type);
 }
 
+void	ccn(char *line, t_tmp *tmp, int i, int type)
+{
+	if (line[i] == '\\' && line[i + 1] && type == 0 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
+		tmp->st = 1;
+	else if (line[i] == '\\' && line[i + 1] && type == 0 && ft_isalnum(line[i + 1]) && tmp->st == 0)
+		tmp->st = 0;
+	else if (line[i] == '\\' && line[i + 1] && type == 2 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
+		tmp->st = 1;
+	else if (line[i] == '\\' && line[i + 1] && type == 2 && ft_isalnum(line[i + 1]))
+		tmp->st = 0;
+	else if (line[i] == '\\' && !line[i + 1])
+		tmp->st = 0;
+	else if (line[i] == '\\' && tmp->st == 1 && type == 0)
+		tmp->st = 0;
+	else if (line[i] == '\\' && tmp->st == 1 && type == 2)
+		tmp->st = 0;
+	else if (line[i] != '\\' && tmp->st == 1)
+		tmp->st = 0;	
+}
 int				close_quote(char *line)
 {
-	int i;
-	int type;
+	int		i;
+	int		type;
+	t_tmp	tmp;
 
 	type = 0;
 	i = 0;
+	tmp.st = 0;
 	while (line[i])
 	{
-		if (line[i] == '\'' && type == 0)
-		{
-			if (i > 0 && line[i - 1] == '\\')
-				type = 0;
-			else
-				type = 1;
-		}
-		else if (line[i] == '\"' && type == 0)
-			type = cq(line, i, type);
-		else if (line[i] == '\'' && type == 1)
-			type = 0;
-		else if (line[i] == '\"' && type == 2)
-			type = cq(line, i, type);
+		type = chckqte(line, i, &tmp, type);
+		ccn(line, &tmp, i, type);
 		i++;
 	}
 	return (type);

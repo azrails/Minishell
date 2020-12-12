@@ -74,7 +74,7 @@ static	char			*func(t_tok *pnt, t_config *cnf)
 	char	*ret;
 
 	env = cnf->envl;
-	len = specstrlen(pnt->func, env, cnf);
+	len = specstrlen(pnt->func, cnf);
 	while (len == 0 && pnt->arg)
 	{
 		env = cnf->envl;
@@ -82,7 +82,7 @@ static	char			*func(t_tok *pnt, t_config *cnf)
 		free(pnt->func);
 		pnt->func = ft_strdup(args->sarg);
 		pnt->qfunc = args->quote;
-		len = specstrlen(pnt->func, env, cnf);
+		len = specstrlen(pnt->func, cnf);
 		pnt->arg = pnt->arg->next;
 		free(args->sarg);
 		free(args);

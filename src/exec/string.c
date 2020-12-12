@@ -82,7 +82,7 @@ static	int			initi(t_tmp *tmp, t_arg *arg, t_env *env, t_config *cnf)
 	tmp->i = 0;
 	tmp->j = 0;
 	tmp->eq = 0;
-	len = specstrlen(arg->sarg, env, cnf);
+	len = specstrlen(arg->sarg, cnf);
 	return (len);
 }
 

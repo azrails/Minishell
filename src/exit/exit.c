@@ -68,9 +68,9 @@ static	void	ext(int c, int t, t_config *cnf, char **targ)
 {
 	if (c == 2 && t == 0)
 		cnf->excode = ft_atoi(targ[1]);
-	else if (c == 2 && t != 0)
+	else if (c >= 2 && t != 0)
 	{
-		cnf->excode = 2;
+		cnf->excode = 255;
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(targ[1], 2);
 		ft_putstr_fd(": numeric argument required\n", 2);

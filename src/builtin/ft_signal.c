@@ -21,8 +21,13 @@ void	ft_signal(int signal)
 	if (signal == SIGINT)
 	{
 		ft_putstr_fd("\b\b  \b\b", 2);
+		sig.excode = 130;
 		if (pid)
+		{
 			ft_putstr_fd("\n\e[1;38;5;47mminishell:\e[0m ", 2);
+			sig.excode = 1;
+		}
+		sig.ctc = 1;
 	}
 	if (signal == SIGQUIT)
 	{

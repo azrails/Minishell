@@ -82,7 +82,7 @@ static	int			inn(char *str, t_env *env, t_config *cnf, t_tmp *tmp)
 	tmp->i = 0;
 	tmp->j = 0;
 	tmp->eq = 0;
-	len = specstrlen(str, env, cnf);
+	len = specstrlen(str, cnf);
 	return (len);
 }
 

@@ -82,7 +82,7 @@ int				getpth(t_rdir *tmp, char *line, int i)
 	while (line[j])
 	{
 		oq = checkq(line, j, oq);
-		if (oq == 0 && issep(line[j]))
+		if (oq == 0 && (issep(line[j]) || isredir(line[j])))
 			break ;
 		count++;
 		j++;
@@ -97,6 +97,7 @@ int				addredir(t_tok *tok, int i, char *line)
 	t_rdir	*tmp;
 	t_rdir	*sc;
 
+	printf("YEP\n");
 	if (!tok->prdir)
 		i = redir(line, i, tok);
 	else

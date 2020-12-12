@@ -76,37 +76,78 @@ static	int			lohic(char *s, t_config *cnf, int i, int *count)
 		while (s[i])
 		{
 			if (s[i] == ' ' || s[i] == '\'' || s[i] == '\"' || s[i] == '\\')
-				return (-1);
+				return (i - 1);
 			i++;
 		}
 		if (s[i] == '\0')
-			return (-1);
+			return (i - 1);
 		i--;
 	}
 	return (i);
 }
 
-int					specstrlen(char *s, t_env *env, t_config *cnf)
+static	int			cocond(char *s, t_tmp *tmp,  int eq, int count)
 {
-	int		i;
-	int		count;
-	int		eq;
+	if ((s[tmp->i] == '\'' || s[tmp->i] == '\"') && eq == 0 && tmp->st == 0)
+		count--;
+	if (s[tmp->i] == '\'' && eq == 1)
+		count--;
+	if (s[tmp->i] == '\"' && eq == 2 && tmp->st == 0)
+		count--;
+	return (count);
+}
 
-	i = 0;
-	count = 0;
-	eq = 0;
-	while (s[i])
+static	int		checslash(char *line, int i, t_tmp *tmp, int count)
+{
+	if (line[i] == '\\' && line[i + 1] && tmp->eq == 0 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
 	{
-		eq = checkq(s, i, eq);
-		if ((s[i] != '$') || (i != 0 && s[i] == '$' && s[i - 1] == '\\')
-			|| (s[i] == '$' && eq == 1))
+		tmp->st = 1;
+		count--;
+	}
+	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 0 && ft_isalnum(line[i + 1]) && tmp->st == 0)
+	{
+		tmp->st = 0;
+		count--;
+	}
+	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 2 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
+	{
+		tmp->st = 1;
+		count--;
+	}
+	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 2 && ft_isalnum(line[i + 1]))
+		tmp->st = 0;
+	else if (line[i] == '\\' && !line[i + 1])
+		tmp->st = 0;
+	else if (line[i] == '\\' && tmp->st == 1 && tmp->eq == 0)
+		tmp->st = 0;
+	else if (line[i] == '\\' && tmp->st == 1 && tmp->eq == 2)
+		tmp->st = 0;
+	else if (line[i] != '\\' && tmp->st == 1)
+		tmp->st = 0;
+	return (count);
+}
+
+int					specstrlen(char *s, t_config *cnf)
+{
+	t_tmp	tmp;
+	int		count;
+
+	tmp.i = 0;
+	count = 0;
+	tmp.eq = 0;
+	tmp.st = 0;
+	printf("%s\n",s);
+	while (s[tmp.i])
+	{
+		tmp.eq = checkqq(s, tmp.i, tmp.eq, &tmp);
+		count = cocond(s, &tmp, tmp.eq, count);
+		if ((s[tmp.i] != '$') || (s[tmp.i] == '$' &&
+			tmp.st == 1) || tmp.eq == 1)
 			count++;
-		else if (s[i] == '$' && eq != 1)
-		{
-			if ((i = lohic(s, cnf, i, &count)) == -1)
-				break ;
-		}
-		i++;
+		else if ((s[tmp.i] == '$' && tmp.eq != 1 && tmp.st == 0))
+			tmp.i = lohic(s, cnf, tmp.i, &count);
+		count = checslash(s, tmp.i, &tmp, count);
+		tmp.i++;
 	}
 	return (count);
 }

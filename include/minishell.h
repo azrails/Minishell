@@ -32,6 +32,7 @@ typedef	struct		s_tmp
 	int				i;
 	int				j;
 	int				eq;
+	int				st;
 }					t_tmp;
 
 typedef	struct		s_pipe
@@ -100,8 +101,8 @@ typedef	struct		s_config
 	pid_t			pid;
 	t_pipe			pipe;
 	t_env			*envl;
-	t_sig			sig;
 	t_tok			*tok;
+	t_env			*senv;
 }					t_config;
 /*
 **PARSER
@@ -132,7 +133,7 @@ void				ft_exit(t_config *cnf, char **targ);
 */
 char				*getname(t_config *cnf, t_tok *pnt);
 void				ptenv(char *str, t_env *env, t_tmp *tmp, char *s);
-int					specstrlen(char *s, t_env *env, t_config *cnf);
+int					specstrlen(char *s, t_config *cnf);
 char				*namefunc(t_config *cnf, t_tok *pnt, int len);
 char				*getstr(t_arg *arg, t_env *env, t_config *cnf);
 char				*gettruepth(char *str, t_env *env, t_config *cnf);
@@ -175,5 +176,11 @@ t_list				*list_from_environ(char **environ);
 void				add_env(t_list *env_list, t_env *env);
 t_env				*init_env(char **key_value);
 void				ft_signal(int signal);
+/*
+**TEST
+*/
+int				checkqq(char *line, int i, int eq ,t_tmp *tmp);
+void	ccn(char *line, t_tmp *tmp, int i, int type);
 
+extern	t_sig	sig;
 #endif
