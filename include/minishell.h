@@ -83,6 +83,7 @@ typedef	struct		s_sig
 	int				ctc;
 	int				cts;
 	int				excode;
+	pid_t			pid;
 }					t_sig;
 
 typedef	struct		s_config
@@ -98,7 +99,6 @@ typedef	struct		s_config
 	int				excode;
 	int				child;
 	char			**env;
-	pid_t			pid;
 	t_pipe			pipe;
 	t_env			*envl;
 	t_tok			*tok;
@@ -181,9 +181,9 @@ int					ft_strlen2(char **array);
 /*
 **TEST
 */
-int				checkqq(char *line, int i, int eq ,t_tmp *tmp);
-void	ccn(char *line, t_tmp *tmp, int i, int type);
-void		checkslh(char *line, int i, t_tmp *tmp);
+int					checkqq(char *line, int i, int eq ,t_tmp *tmp);
+void				ccn(char *line, t_tmp *tmp, int i, int type);
+void				checkslh(char *line, int i, t_tmp *tmp);
 
-extern	t_sig	sig;
+extern	t_sig	g_sig;
 #endif

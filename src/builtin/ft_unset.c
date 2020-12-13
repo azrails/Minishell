@@ -45,10 +45,11 @@ int			env_exist(char *argv, t_config *cnf)
 	int	i;
 
 	i = 0;
-	while (cnf->env[i++])
+	while (cnf->env[i])
 	{
 		if (!ft_strncmp(cnf->env[i], argv, ft_strlen(argv)))
 			return (1);
+		i++;
 	}
 	return (0);
 }
@@ -57,11 +58,12 @@ int			ft_unset(char **argv, t_config *cnf)
 {
 	int		i;
 
-	i = 0;
-	while (argv[++i])
+	i = 1;
+	while (argv[i])
 	{
 		if (env_exist(argv[i], cnf))
 			remove_env(argv[i], cnf);
+		i++;
 	}
 	return (errno);
 }

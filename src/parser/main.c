@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-t_sig	sig;
+t_sig	g_sig;
 
 static	void	con(t_config *cnf, int x)
 {
@@ -43,8 +43,8 @@ void			pars(t_config *cnf)
 	line = NULL;
 	if ((x = get_next_line(0, &line)) <= 0)
 		con(cnf, x);
-	cnf->excode = (sig.ctc == 1) ? sig.excode : cnf->excode;
-	if (line && sig.ctc != 1)
+	cnf->excode = (g_sig.ctc == 1) ? g_sig.excode : cnf->excode;
+	if (line && g_sig.ctc != 1)
 	{
 		if (close_quote(line))
 		{
@@ -72,9 +72,10 @@ int				main(int argc, char **argv, char **env)
 	cnf.excode = 0;
 	while (cnf.exit)
 	{
-		sig.ctc = 0;
-		sig.excode = 0;
-		sig.cts = 0;
+		g_sig.ctc = 0;
+		g_sig.pid = 0;
+		g_sig.excode = 0;
+		g_sig.cts = 0;
 		cnf.tok = NULL;
 		pars(&cnf);
 		if (cnf.tok != NULL)

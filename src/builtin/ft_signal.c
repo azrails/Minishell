@@ -14,25 +14,29 @@
 
 void	ft_signal(int signal)
 {
-	int		pid;
 	int		status;
-
-	pid = waitpid(-1, &status, WNOHANG);
 	if (signal == SIGINT)
 	{
-		ft_putstr_fd("\b\b  \b\b", 2);
-		sig.excode = 130;
-		if (pid)
+		if (!g_sig.pid)
 		{
-			ft_putstr_fd("\n\e[1;38;5;47mminishell:\e[0m ", 2);
-			sig.excode = 1;
+			ft_putstr_fd("\b\b  \b\b", 2);
+			g_sig.excode = 1;
 		}
-		sig.ctc = 1;
+		else
+		{
+			ft_putstr_fd("\n", 2);
+			g_sig.excode = 130;
+		}
+		g_sig.ctc = 1;
 	}
 	if (signal == SIGQUIT)
 	{
-		if (!pid)
+		if (g_sig.pid != 0)
+		{
 			ft_putstr_fd("Quit: 3\n", 2);
+			g_sig.cts = 1;
+			g_sig.excode = 131;
+		}
 		else
 			ft_putstr_fd("\b\b  \b\b", 2);
 	}

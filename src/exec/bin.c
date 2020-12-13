@@ -55,8 +55,8 @@ int					bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
 	int status;
 
 	status = 0;
-	cnf->pid = fork();
-	if (cnf->pid == 0)
+	g_sig.pid = fork();
+	if (g_sig.pid == 0)
 	{
 		if (p && ft_strchr(p, '/'))
 			execve(p, targ, cnf->env);
@@ -64,7 +64,9 @@ int					bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
 		exit(status);
 	}
 	else
-		waitpid(cnf->pid, &status, 0);
+		waitpid(g_sig.pid, &status, 0);
+	if (g_sig.ctc == 1 || g_sig.cts == 1)
+		return (g_sig.excode);
 	status = (status == 32256 || status == 32512) ? status / 256 : !!status;
 	return (status);
 }

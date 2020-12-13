@@ -31,17 +31,17 @@ int		isbuilt(char *name)
 
 int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ)
 {
-	if (!ft_strcmp(pnt->func, "cd"))
+	if (!ft_strcmp(targ[0], "cd"))
 		cnf->excode = ft_cd(targ, cnf->env);
-	if (!ft_strcmp(pnt->func, "echo"))
+	if (!ft_strcmp(targ[0], "echo"))
 		cnf->excode = ft_echo(targ);
-	if (!ft_strcmp(pnt->func, "pwd"))
+	if (!ft_strcmp(targ[0], "pwd"))
 		cnf->excode = ft_pwd();
-	if (!ft_strcmp(pnt->func, "export"))
+	if (!ft_strcmp(targ[0], "export"))
 		cnf->excode = ft_export(targ, cnf);
-	if (!ft_strcmp(pnt->func, "unset"))
+	if (!ft_strcmp(targ[0], "unset"))
 		cnf->excode = ft_unset(targ, cnf);
-	if (!ft_strcmp(pnt->func, "env"))
+	if (!ft_strcmp(targ[0], "env"))
 		cnf->excode = ft_env(cnf->env);
 	return (0);
 }

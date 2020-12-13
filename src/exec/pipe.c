@@ -39,6 +39,7 @@ t_tok			*gopipe(t_tok *pnt, t_config *cnf)
 		cnf->pipe.pid[i] = fork();
 		if (cnf->pipe.pid[i] == 0)
 		{
+			cnf->excode = 0;
 			cp(cnf, i);
 			cnf->pipein = cnf->pipe.pipefd[i][0];
 			pnt = pnt->next;

@@ -62,15 +62,15 @@ void				preex(t_config *cnf, t_tok *pnt)
 	i = 0;
 	targ = NULL;
 	targ = argtomatrix(pnt, cnf);
-	if (pnt->func && !(ft_strcmp(pnt->func, "exit"))
+	if (targ && targ[0] && !(ft_strcmp(targ[0], "exit"))
 		&& (cnf->pipe.cp != 0 && cnf->pipe.i == 0))
 		cnf->err = 2;
-	if (pnt->func && !(ft_strcmp(pnt->func, "exit")) && cnf->err == 0)
+	if (targ && targ[0] && !(ft_strcmp(targ[0], "exit")) && cnf->err == 0)
 		ft_exit(cnf, targ);
-	else if (targ && pnt->func && isbuilt(pnt->func)
+	else if (targ && targ[0] && isbuilt(targ[0])
 		&& cnf->exit && cnf->err == 0)
 		gobuiltin(cnf, pnt, targ);
-	else if (pnt->func && cnf->exit && cnf->err == 0)
+	else if (targ[0] && cnf->exit && cnf->err == 0)
 		cnf->excode = goexec(cnf, pnt, targ);
 	tf(targ);
 }

@@ -144,7 +144,10 @@ int					specstrlen(char *s, t_config *cnf)
 			tmp.st == 1) || tmp.eq == 1)
 			count++;
 		else if ((s[tmp.i] == '$' && tmp.eq != 1 && tmp.st == 0))
-			tmp.i = lohic(s, cnf, tmp.i, &count);
+		{	
+			if ((tmp.i = lohic(s, cnf, tmp.i, &count)) == -1)
+				break ;
+		}
 		count = checslash(s, tmp.i, &tmp, count);
 		tmp.i++;
 	}
