@@ -136,7 +136,6 @@ int					specstrlen(char *s, t_config *cnf)
 	count = 0;
 	tmp.eq = 0;
 	tmp.st = 0;
-	printf("%s\n",s);
 	while (s[tmp.i])
 	{
 		tmp.eq = checkqq(s, tmp.i, tmp.eq, &tmp);

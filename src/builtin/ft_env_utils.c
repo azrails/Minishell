@@ -74,3 +74,30 @@ void		add_env(t_list *env_list, t_env *env)
 		env_list = env_list->next;
 	}
 }
+
+char		**list_to_array(t_list *list)
+{
+	char	**array;
+	char	*tmp;
+	t_env	*env;
+	int		size;
+	int		i;
+
+	size = ft_lstsize(list);
+	i = 0;
+	if (!(array = (char**)malloc(sizeof(char*) * (size + 1))))
+		return (NULL);
+	while (list)
+	{
+		env = list->content;
+		if (env->value && *env->value)
+		{
+			tmp = ft_strjoin(env->key, "=");
+			array[i++] = ft_strjoin(tmp, env->value);
+			free(tmp);
+		}
+		list = list->next;
+	}
+	array[i] = NULL;
+	return (array);
+}

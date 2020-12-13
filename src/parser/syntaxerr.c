@@ -48,7 +48,7 @@ void	ccn(char *line, t_tmp *tmp, int i, int type)
 	else if (line[i] == '\\' && tmp->st == 1 && type == 2)
 		tmp->st = 0;
 	else if (line[i] != '\\' && tmp->st == 1)
-		tmp->st = 0;	
+		tmp->st = 0;
 }
 int				close_quote(char *line)
 {

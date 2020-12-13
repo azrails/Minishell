@@ -87,7 +87,7 @@ static	void		ii(t_tmp *tmp, t_config *cnf, t_env *env)
 	env = cnf->envl;
 }
 
-static	void		checkslh(char *line, int i, t_tmp *tmp)
+void		checkslh(char *line, int i, t_tmp *tmp)
 {
 	if (line[i] == '\\' && line[i + 1] && tmp->eq == 0 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
 	{
@@ -127,6 +127,7 @@ char				*namefunc(t_config *cnf, t_tok *pnt, int len)
 	while (pnt->func[tmp.i] && tmp.j < len)
 	{
 		tmp.eq = checkqq(pnt->func, tmp.i, tmp.eq, &tmp);
+		//printf("eq %d %d %d\n",tmp.eq, tmp.st, tmp.i);
 		if ((pnt->func[tmp.i] != '$') || (pnt->func[tmp.i] == '$' &&
 			tmp.st == 1) || tmp.eq == 1)
 			ret[tmp.j] = pnt->func[tmp.i];

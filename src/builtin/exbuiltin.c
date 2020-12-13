@@ -38,14 +38,9 @@ int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ)
 	if (!ft_strcmp(pnt->func, "pwd"))
 		cnf->excode = ft_pwd();
 	if (!ft_strcmp(pnt->func, "export"))
-	{
-		//if (targ && targ[1] && !targ[2])
-			//cnf->excode = ft_export(targ ,cnf->env);
-		//else if (targ && targ[1] && targ[2])
-			cnf->excode = ft_export(targ, cnf->env);
-	}
+		cnf->excode = ft_export(targ, cnf);
 	if (!ft_strcmp(pnt->func, "unset"))
-		cnf->excode = ft_unset(targ, cnf->env);
+		cnf->excode = ft_unset(targ, cnf);
 	if (!ft_strcmp(pnt->func, "env"))
 		cnf->excode = ft_env(cnf->env);
 	return (0);

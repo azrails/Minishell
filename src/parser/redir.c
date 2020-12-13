@@ -71,24 +71,25 @@ static	int		in(char *line, int i, t_rdir *tmp, int j)
 
 int				getpth(t_rdir *tmp, char *line, int i)
 {
-	int j;
-	int	oq;
-	int	count;
+	t_tmp	tm;
+	int		count;
 
-	oq = 0;
+	tm.eq = 0;
 	count = 0;
 	i = ft_skipspace(line, i);
-	j = i;
-	while (line[j])
+	tm.j = i;
+	while (line[tm.j])
 	{
-		oq = checkq(line, j, oq);
-		if (oq == 0 && (issep(line[j]) || isredir(line[j])))
-			break ;
+		ccn(line, &tm, tm.j, tm.eq);
+		tm.eq = checkqq(line, tm.j, tm.eq, &tm);
+		if ((tm.eq == 0 && issep(line[tm.j]) && tm.st == 0)
+			|| (tm.eq == 0 && isredir(line[tm.j]) && tm.st == 0))
+			break;
 		count++;
-		j++;
+		tm.j++;
 	}
 	tmp->prdir = malloc(sizeof(char) * count + 1);
-	i = in(line, i, tmp, j);
+	i = in(line, i, tmp, tm.j);
 	return (i);
 }
 
@@ -97,7 +98,6 @@ int				addredir(t_tok *tok, int i, char *line)
 	t_rdir	*tmp;
 	t_rdir	*sc;
 
-	printf("YEP\n");
 	if (!tok->prdir)
 		i = redir(line, i, tok);
 	else

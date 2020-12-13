@@ -19,16 +19,13 @@ int				isredir(char c)
 	return (0);
 }
 
-static	int		rec(char *line, int i, int j, t_tok *tok)
+static	int		rec(char *line, int i, t_tmp *tmp, t_tok *tok)
 {
 	int endn;
-	int eq;
 
 	endn = 0;
-	eq = 0;
-	while (line[i] && i < j)
+	while (line[i] && i < tmp->j)
 	{
-		eq = checkq(line, i, eq);
 		tok->func[endn] = line[i];
 		i++;
 		endn++;
@@ -40,25 +37,24 @@ static	int		rec(char *line, int i, int j, t_tok *tok)
 int				funcname(char *line, int i, t_tok *tok)
 {
 	int		endn;
-	int		j;
-	int		eq;
+	t_tmp	tmp;
 
 	endn = 0;
-	j = i;
-	eq = 0;
-	while (line[j])
+	tmp.j = i;
+	tmp.eq = 0;
+	tmp.st = 0;
+	while (line[tmp.j])
 	{
-		eq = checkq(line, j, eq);
-		if (eq == 0 && issep(line[j]))
-		{
-			if (j == 0 || (j > 0 && line[j - 1] != '\\'))
-				break ;
-		}
+		ccn(line, &tmp, tmp.j, tmp.eq);
+		tmp.eq = checkqq(line, tmp.j, tmp.eq, &tmp);
+		if ((tmp.eq == 0 && issep(line[tmp.j]) && tmp.st == 0)
+			|| (tmp.eq == 0 && isredir(line[tmp.j]) && tmp.st == 0))
+			break;
 		endn++;
-		j++;
+		tmp.j++;
 	}
 	if (!(tok->func = malloc(sizeof(char) * endn + 1)))
 		return (-1);
-	i = rec(line, i, j, tok);
+	i = rec(line, i, &tmp, tok);
 	return (i);
 }

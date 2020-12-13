@@ -167,20 +167,23 @@ int					isbuilt(char *name);
 int					ft_cd(char **argv, char **environ);
 int					ft_echo(char **argv);
 int					ft_env(char **environ);
-int					ft_export(char **argv, char **environ);
+int					ft_export(char **argv, t_config *cnf);
 int					ft_pwd(void);
-int					ft_unset(char **argv, char **environ);
+int					ft_unset(char **argv, t_config *cnf);
 int					compare_str(const char *s1, const char *s2);
 t_list				*get_sorted_list(t_list *env_list);
 t_list				*list_from_environ(char **environ);
 void				add_env(t_list *env_list, t_env *env);
 t_env				*init_env(char **key_value);
 void				ft_signal(int signal);
+char				**list_to_array(t_list *list);
+int					ft_strlen2(char **array);
 /*
 **TEST
 */
 int				checkqq(char *line, int i, int eq ,t_tmp *tmp);
 void	ccn(char *line, t_tmp *tmp, int i, int type);
+void		checkslh(char *line, int i, t_tmp *tmp);
 
 extern	t_sig	sig;
 #endif

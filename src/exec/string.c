@@ -82,10 +82,62 @@ static	int			initi(t_tmp *tmp, t_arg *arg, t_env *env, t_config *cnf)
 	tmp->i = 0;
 	tmp->j = 0;
 	tmp->eq = 0;
+	tmp->st = 0;
 	len = specstrlen(arg->sarg, cnf);
 	return (len);
 }
 
+
+
+
+
+
+static	void		gtc(t_tmp *tmp, t_config *cnf, char *ret)
+{
+	char	*ss;
+	int		k;
+
+	k = 0;
+	ss = ft_itoa(cnf->excode);
+	while (ss[k])
+	{
+		ret[tmp->j] = ss[k];
+		tmp->j++;
+		k++;
+	}
+	tmp->j--;
+	tmp->i++;
+	free(ss);
+}
+
+static	int			ccg(t_arg *arg, t_tmp *tmp, char *ret, t_config *cnf)
+{
+	if (arg->sarg[tmp->i + 1] && arg->sarg[tmp->i + 1] == '?')
+	{
+		gtc(tmp, cnf, ret);
+	}
+	else
+	{
+		tmp->i++;
+		ptenv(arg->sarg, cnf->envl, tmp, ret);
+		tmp->j--;
+		if (arg->sarg[tmp->i] == '\0')
+			return (tmp->i - 1);
+		tmp->i--;
+	}
+	return (tmp->i);
+}
+
+static	int			condiis(t_arg *arg, t_tmp *tmp,  int eq)
+{
+	if ((arg->sarg[tmp->i] == '\'' || arg->sarg[tmp->i] == '\"') && eq == 0 && tmp->st == 0)
+		tmp->j--;
+	if (arg->sarg[tmp->i] == '\'' && eq == 1)
+		tmp->j--;
+	if (arg->sarg[tmp->i] == '\"' && eq == 2 && tmp->st == 0)
+		tmp->j--;
+	return (tmp->j);
+}
 char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
 {
 	char	*ret;
@@ -97,7 +149,15 @@ char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
 		return (NULL);
 	while (arg->sarg[tmp.i])
 	{
-		tmp.eq = checkq(arg->sarg, tmp.i, tmp.eq);
+		tmp.eq = checkqq(arg->sarg, tmp.i, tmp.eq, &tmp);
+		if ((arg->sarg[tmp.i] != '$') || (arg->sarg[tmp.i] == '$' &&
+			tmp.st == 1) || tmp.eq == 1)
+			ret[tmp.j] = arg->sarg[tmp.i];
+		if ((arg->sarg[tmp.i] == '$' && tmp.eq != 1 && tmp.st == 0))
+			tmp.i = ccg(arg, &tmp, ret, cnf);
+		tmp.j = condiis(arg, &tmp,  tmp.eq);
+		checkslh(arg->sarg, tmp.i, &tmp);
+		/*tmp.eq = checkq(arg->sarg, tmp.i, tmp.eq);
 		if (((arg->sarg[tmp.i] != '$') || (tmp.i != 0 && arg->sarg[tmp.i] == '$'
 			&& arg->sarg[tmp.i - 1] == '\\')) || tmp.eq == 1)
 			ret[tmp.j] = arg->sarg[tmp.i];
@@ -107,7 +167,7 @@ char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
 		{
 			if ((tmp.i = ccl(arg, &tmp, ret, cnf)) == -1)
 				break ;
-		}
+		}*/
 		tmp.j++;
 		tmp.i++;
 	}

@@ -36,25 +36,27 @@ static	int		in(char *line, int i, t_tok *tok, int j)
 
 static	int		prdir(t_tok *tok, char *line, int i)
 {
-	int	j;
-	int count;
-	int oq;
+	int		count;
+	t_tmp	tmp;
 
 	count = 0;
-	oq = 0;
+	tmp.eq = 0;
+	tmp.st = 0;
 	i = ft_skipspace(line, i);
-	j = i;
-	while (line[j])
+	tmp.j = i;
+	while (line[tmp.j])
 	{
-		oq = checkq(line, j, oq);
-		if (oq == 0 && issep(line[j]))
-			break ;
+		tmp.eq = checkqq(line, tmp.j, tmp.eq, &tmp);
+		if ((tmp.eq == 0 && issep(line[tmp.j]) && tmp.st == 0)
+			|| (tmp.eq == 0 && isredir(line[tmp.j]) && tmp.st == 0))
+			break;
+		ccn(line, &tmp, tmp.j, tmp.eq);
 		count++;
-		j++;
+		tmp.j++;
 	}
 	if (!(tok->prdir = malloc(sizeof(char) * count + 1)))
 		return (-1);
-	i = in(line, i, tok, j);
+	i = in(line, i, tok, tmp.j);
 	return (i);
 }
 

@@ -93,12 +93,12 @@ t_list		*list_from_environ(char **environ)
 	return (env_list);
 }
 
-int			ft_export(char **argv, char **environ)
+int			ft_export(char **argv, t_config *cnf)
 {
 	t_list	*env_list;
 	char	**key_value;
 
-	env_list = list_from_environ(environ);
+	env_list = list_from_environ(cnf->env);
 	if (!argv[1])
 		print_export(env_list);
 	else
@@ -116,5 +116,7 @@ int			ft_export(char **argv, char **environ)
 			argv++;
 		}
 	}
+	cnf->env = list_to_array(env_list);
+	free(env_list);
 	return (errno);
 }

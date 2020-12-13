@@ -56,8 +56,7 @@ t_arg					*getarg(char *line, int *i)
 {
 	t_arg	*arg;
 	int		arglen;
-	int		j;
-	int		eq;
+	t_tmp	tmp;
 
 	arglen = 0;
 	if (!(arg = malloc(sizeof(t_arg))))
@@ -65,18 +64,21 @@ t_arg					*getarg(char *line, int *i)
 	arg->next = NULL;
 	arg->prev = NULL;
 	*i = argqt(arg, line, *i);
-	eq = 0;
-	j = *i;
-	while (line[j])
+	tmp.eq = 0;
+	tmp.j = *i;
+	tmp.st = 0;
+	while (line[tmp.j])
 	{
-		eq = checkq(line, j, eq);
-		if (checkbreak(line, j, eq))
-			break ;
+		tmp.eq = checkqq(line, tmp.j, tmp.eq, &tmp);
+		if ((tmp.eq == 0 && issep(line[tmp.j]) && tmp.st == 0)
+			|| (tmp.eq == 0 && isredir(line[tmp.j]) && tmp.st == 0))
+			break;
+		ccn(line, &tmp, tmp.j, tmp.eq);
 		arglen++;
-		j++;
+		tmp.j++;
 	}
 	if (!(arg->sarg = malloc(sizeof(char) * arglen + 1)))
 		return (NULL);
-	*i = dr(line, *i, j, arg);
+	*i = dr(line, *i, tmp.j, arg);
 	return (arg);
 }
