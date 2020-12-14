@@ -78,6 +78,7 @@ int				getpth(t_rdir *tmp, char *line, int i)
 	count = 0;
 	i = ft_skipspace(line, i);
 	tm.j = i;
+	tm.st = 0;
 	while (line[tm.j])
 	{
 		ccn(line, &tm, tm.j, tm.eq);
