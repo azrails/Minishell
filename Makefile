@@ -23,6 +23,7 @@ SRCS = src/parser/main.c \
 		src/parser/tool.c \
 		src/parser/tool2.c \
 		src/parser/env.c \
+		src/parser/slh.c \
 		src/parser/redir.c \
 		src/exec/exec.c \
 		src/exec/hub.c \
@@ -33,6 +34,7 @@ SRCS = src/parser/main.c \
 		src/exec/fd.c \
 		src/exec/prerdir.c \
 		src/exec/pipe.c \
+		src/exec/slhs.c \
 		src/exec/pipe2.c \
 		src/exec/execute.c \
 		src/exec/speclen.c \
@@ -47,6 +49,9 @@ SRCS = src/parser/main.c \
 		src/builtin/ft_unset.c \
 		src/builtin/ft_pwd.c \
 		src/builtin/ft_signal.c \
+		src/builtin/ecpu.c \
+		src/builtin/unsutils.c \
+		src/builtin/exportutils.c \
 		src/exit/exit.c
 
 O = $(SRCS:.c=.o)
@@ -56,7 +61,7 @@ FLAGS = -Wall -Wextra -Werror
 all: $(NAME)
 
 %.o: %.c
-	clang $(FLAG) -g -c $< -o $@
+	clang -g -c $(FLAGS) $< -o $@
 
 $(NAME): $(O)
 		make -C libft

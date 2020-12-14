@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   exportutils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fdarrin <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: wsallei <wsallei@student.21-school.ru>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/25 22:41:14 by fdarrin           #+#    #+#             */
-/*   Updated: 2020/11/25 22:41:20 by fdarrin          ###   ########.fr       */
+/*   Created: 2020/12/14 20:07:32 by wsallei           #+#    #+#             */
+/*   Updated: 2020/12/14 20:07:33 by wsallei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static	int		in2(t_config *cnf, t_env *tenv, t_env *tenv2, int i)
+static	int		ini(t_config *cnf, t_env *tenv, t_env *tenv2, int i)
 {
 	int		j;
 	int		remove;
 
 	j = 1;
 	remove = siseenv(cnf);
-	if (i != 1 && i != remove)
+	if ((i != 1 && i != remove) || i == 1)
 	{
 		freed(tenv, tenv2, i, j);
 		return (1);
@@ -37,7 +37,7 @@ static	int		in2(t_config *cnf, t_env *tenv, t_env *tenv2, int i)
 	return (0);
 }
 
-void			remove_env(char *argv, t_config *cnf)
+static	void	re_env(char *argv, t_config *cnf)
 {
 	int		i;
 	t_env	*tenv;
@@ -48,9 +48,9 @@ void			remove_env(char *argv, t_config *cnf)
 	tenv2 = cnf->senvl;
 	while (tenv)
 	{
-		if (!(ft_strcmp(tenv->value, argv)))
+		if (!(ft_strcmp(tenv->key, argv)))
 		{
-			if (in2(cnf, tenv, tenv2, i))
+			if (ini(cnf, tenv, tenv2, i))
 				break ;
 		}
 		tenv = tenv->next;
@@ -58,16 +58,7 @@ void			remove_env(char *argv, t_config *cnf)
 	}
 }
 
-void			freed22(t_env *tenv, t_env *tenv2, t_config *cnf)
-{
-	tenv2 = tenv2->next;
-	cnf->envl = tenv2;
-	free(tenv->key);
-	free(tenv->value);
-	free(tenv);
-}
-
-int				env_exist(char *argv, t_config *cnf)
+static	int		env_exi(char *argv, t_config *cnf)
 {
 	int		i;
 	t_env	*tenv;
@@ -76,26 +67,32 @@ int				env_exist(char *argv, t_config *cnf)
 	tenv = cnf->envl;
 	while (tenv)
 	{
-		if (!(ft_strcmp(tenv->value, argv)))
+		if (!(ft_strcmp(tenv->key, argv)))
 			return (1);
 		tenv = tenv->next;
 	}
 	return (0);
 }
 
-int				ft_unset(char **argv, t_config *cnf)
+void			preexp(char **key_value, t_config *cnf)
 {
-	int		i;
-
-	i = 1;
-	while (argv[i])
+	if (key_value && key_value[0] && key_value[1])
 	{
-		if (env_exist(argv[i], cnf))
+		if (env_exi(key_value[0], cnf))
 		{
-			remove_env(argv[i], cnf);
-			remove_env2(argv[i], cnf);
+			re_env(key_value[0], cnf);
+			re_env2(key_value[0], cnf);
 		}
-		i++;
 	}
-	return (errno);
+}
+
+void			postex(t_list *env_list, t_config *cnf)
+{
+	char	**env;
+
+	env = list_to_array(env_list);
+	freeenv(cnf->senvl);
+	envtolist(cnf, env, 1);
+	tf(env);
+	freelistenv(env_list);
 }

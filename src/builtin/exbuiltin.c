@@ -29,7 +29,7 @@ int		isbuilt(char *name)
 	return (0);
 }
 
-int		gobuiltin(t_config *cnf, t_tok *pnt, char **targ)
+int		gobuiltin(t_config *cnf, char **targ)
 {
 	if (!ft_strcmp(targ[0], "cd"))
 		cnf->excode = ft_cd(targ, cnf->env);

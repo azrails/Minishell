@@ -14,7 +14,7 @@
 
 static	int			ccl(t_config *cnf, t_arg *tmp, char **args, int i)
 {
-	args[i] = getstr(tmp, cnf->envl, cnf);
+	args[i] = getstr(tmp, cnf);
 	if (!args[i])
 		i--;
 	if (!args[i][0])
@@ -69,7 +69,7 @@ void				preex(t_config *cnf, t_tok *pnt)
 		ft_exit(cnf, targ);
 	else if (targ && targ[0] && isbuilt(targ[0])
 		&& cnf->exit && cnf->err == 0)
-		gobuiltin(cnf, pnt, targ);
+		gobuiltin(cnf, targ);
 	else if (targ[0] && cnf->exit && cnf->err == 0)
 		cnf->excode = goexec(cnf, pnt, targ);
 	tf(targ);
@@ -121,8 +121,8 @@ void				exec(t_config *cnf)
 			pnt = pnt->next;
 			i++;
 		}
-		cnf->envl = freeenv(cnf->envl);
-		envtolist(cnf, cnf->env);
+		tf(cnf->env);
+		cnf->env = cpyenv(cnf);
 		pnt = pnt->next;
 	}
 }

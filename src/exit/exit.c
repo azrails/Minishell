@@ -16,7 +16,6 @@ void			freetok(t_tok *tok)
 {
 	t_tok	*tmp;
 	t_arg	*targ;
-	t_rdir	*td;
 
 	while (tok)
 	{

@@ -28,7 +28,7 @@ static	int			cyclerdir(t_tok *pnt, t_config *cnf)
 		{
 			tmp = pnt->ndir;
 			free(pnt->prdir);
-			pnt->prdir = gettruepth(tmp->prdir, cnf->envl, cnf);
+			pnt->prdir = gettruepth(tmp->prdir, cnf);
 			pnt->rdir = tmp->type;
 			if (pnt->rdir == 1)
 			{
@@ -68,7 +68,7 @@ int					pipedir(t_tok *pnt, t_config *cnf)
 		cnf->child = 2;
 	if (pnt->rdir == 1)
 	{
-		s = gettruepth(pnt->prdir, cnf->envl, cnf);
+		s = gettruepth(pnt->prdir, cnf);
 		free(pnt->prdir);
 		pnt->prdir = s;
 		if (!(inp(cnf, pnt)))
@@ -76,7 +76,7 @@ int					pipedir(t_tok *pnt, t_config *cnf)
 	}
 	else if (pnt->rdir == 2 || pnt->rdir == 3)
 	{
-		s = gettruepth(pnt->prdir, cnf->envl, cnf);
+		s = gettruepth(pnt->prdir, cnf);
 		free(pnt->prdir);
 		pnt->prdir = s;
 		if (!(dir(cnf, pnt)))

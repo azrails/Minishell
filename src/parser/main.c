@@ -25,39 +25,46 @@ static	void	con(t_config *cnf, int x)
 	else if (x == 0)
 	{
 		tf(cnf->env);
+		cnf->senvl = freeenv(cnf->senvl);
 		freeenvl(cnf->envl);
 		ft_putendl_fd("exit", 1);
 		exit(0);
 	}
 }
 
+static	int		chprs(char *line, t_config *cnf)
+{
+	if (close_quote(line))
+	{
+		ft_putstr_fd("minishell: syntax error: not close quote\n", 2);
+		cnf->excode = 127;
+		free(line);
+		return (1);
+	}
+	if (checkunexp(cnf, line))
+	{
+		free(line);
+		return (1);
+	}
+	return (0);
+}
+
 void			pars(t_config *cnf)
 {
 	char	*line;
-	t_tok	*tok;
 	int		x;
 
-	signal(SIGINT, ft_signal);
-	signal(SIGQUIT, ft_signal);
+	signal(SIGINT, ft_signalc);
+	signal(SIGQUIT, ft_signals);
 	ft_putstr_fd("\e[1;38;5;47mminishell:\e[0m ", 2);
 	line = NULL;
-	if ((x = get_next_line(0, &line)) <= 0)
+	if ((x = get_next_line(2, &line)) <= 0)
 		con(cnf, x);
 	cnf->excode = (g_sig.ctc == 1) ? g_sig.excode : cnf->excode;
-	if (line && g_sig.ctc != 1)
+	if (line)
 	{
-		if (close_quote(line))
-		{
-			ft_putstr_fd("\e[1;38;5;202msyntax error: not close quote\e[0m\n", 2);
-			cnf->excode = 127;
-			free(line);
+		if (chprs(line, cnf))
 			return ;
-		}
-		if (checkunexp(cnf, line))
-		{
-			free(line);
-			return ;
-		}
 		cnf->tok = analys(line);
 	}
 	else
@@ -68,6 +75,9 @@ int				main(int argc, char **argv, char **env)
 {
 	t_config cnf;
 
+	argc = 0;
+	if (argv && argv[0])
+		argv[0][0] = argc;
 	init(&cnf, env);
 	cnf.excode = 0;
 	while (cnf.exit)
@@ -84,6 +94,7 @@ int				main(int argc, char **argv, char **env)
 	}
 	tf(cnf.env);
 	freeenvl(cnf.envl);
+	cnf.senvl = freeenv(cnf.senvl);
 	write(1, "\0", 0);
 	return (cnf.excode);
 }

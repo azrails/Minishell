@@ -24,14 +24,15 @@ static	void	pp(t_config *cnf, int i)
 	cnf->child = 1;
 	closefd(cnf->pipe.pipefd[i][0]);
 	dup2(cnf->pipe.pipefd[i][1], 1);
+	cnf->pipeout = cnf->pipe.pipefd[i][1];
 }
 
 t_tok			*gopipe(t_tok *pnt, t_config *cnf)
 {
 	int i;
 
-	intil(cnf, pnt);
 	i = 0;
+	intil(cnf, pnt);
 	while (i < cnf->pipe.cp)
 	{
 		cnf->pipe.i = i;
@@ -45,10 +46,7 @@ t_tok			*gopipe(t_tok *pnt, t_config *cnf)
 			pnt = pnt->next;
 		}
 		else
-		{
 			pp(cnf, i);
-			cnf->pipeout = cnf->pipe.pipefd[i][1];
-		}
 		if (cnf->pipe.pid[i] != 0)
 			break ;
 		i++;

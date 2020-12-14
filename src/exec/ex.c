@@ -98,7 +98,6 @@ char					*getname(t_config *cnf, t_tok *pnt)
 	char	*ret;
 	int		i;
 	int		j;
-	int		len;
 
 	i = 0;
 	j = 0;

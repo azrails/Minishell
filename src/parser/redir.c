@@ -84,7 +84,7 @@ int				getpth(t_rdir *tmp, char *line, int i)
 		tm.eq = checkqq(line, tm.j, tm.eq, &tm);
 		if ((tm.eq == 0 && issep(line[tm.j]) && tm.st == 0)
 			|| (tm.eq == 0 && isredir(line[tm.j]) && tm.st == 0))
-			break;
+			break ;
 		count++;
 		tm.j++;
 	}

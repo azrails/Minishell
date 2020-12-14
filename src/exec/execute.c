@@ -44,17 +44,17 @@ static int			is_absolute_path(char *path)
 	return (0);
 }
 
-static	int			cond(t_config *cnf, t_tok *pnt, char **targ, char *p)
+static	int			cond(t_config *cnf, char **targ, char *p)
 {
 	int status;
 
 	status = 127;
 	if (is_absolute_path(targ[0]) && !p)
-		status = bin(targ[0], targ, cnf, pnt);
+		status = bin(targ[0], targ, cnf);
 	else if (p != NULL)
-		status = bin(p, targ, cnf, pnt);
+		status = bin(p, targ, cnf);
 	else
-		status = bin(p, targ, cnf, pnt);
+		status = bin(p, targ, cnf);
 	return (status);
 }
 
@@ -68,6 +68,7 @@ int					goexec(t_config *cnf, t_tok *pnt, char **targ)
 
 	i = 0;
 	p = NULL;
+	tp = NULL;
 	env = cnf->envl;
 	status = 127;
 	while (env && env->key && ft_strcmp(env->key, "PATH"))
@@ -78,9 +79,9 @@ int					goexec(t_config *cnf, t_tok *pnt, char **targ)
 		if (!(pnt->func) && !tp[0])
 			return (1);
 		while (pnt->func && tp[i] && p == NULL)
-			p = srchpth(tp[i++], pnt->func);
+			p = srchpth(tp[i++], targ[0]);
 	}
-	status = cond(cnf, pnt, targ, p);
+	status = cond(cnf, targ, p);
 	free(p);
 	tf(tp);
 	return (status);

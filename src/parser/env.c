@@ -30,11 +30,14 @@ static	void	inclvl(t_config *cnf)
 	tmp->value = ft_itoa(actlvl);
 }
 
-static	void	cl(t_config *cnf, t_env *list, char **env)
+static	void	cl(t_config *cnf, t_env *list, char **env, int type)
 {
 	char **tmp;
 
-	cnf->envl = list;
+	if (type == 0)
+		cnf->envl = list;
+	if (type == 1)
+		cnf->senvl = list;
 	list->next = NULL;
 	tmp = ft_frstsplit(env[0], '=');
 	list->key = tmp[0];
@@ -42,7 +45,7 @@ static	void	cl(t_config *cnf, t_env *list, char **env)
 	free(tmp);
 }
 
-void			envtolist(t_config *cnf, char **env)
+void			envtolist(t_config *cnf, char **env, int type)
 {
 	t_env	*next;
 	t_env	*list;
@@ -54,7 +57,7 @@ void			envtolist(t_config *cnf, char **env)
 		return ;
 	if (!(list = malloc(sizeof(t_env))))
 		return ;
-	cl(cnf, list, env);
+	cl(cnf, list, env, type);
 	while (env && env[i])
 	{
 		if (!(next = malloc(sizeof(t_env))))
@@ -70,7 +73,7 @@ void			envtolist(t_config *cnf, char **env)
 	}
 }
 
-static	char	**cpyenv(t_config *cnf)
+char			**cpyenv(t_config *cnf)
 {
 	t_env	*tmp;
 	char	*s;
@@ -106,7 +109,8 @@ void			init(t_config *cnf, char **env)
 	cnf->saveout = -1;
 	cnf->envl = NULL;
 	cnf->env = NULL;
-	envtolist(cnf, env);
+	envtolist(cnf, env, 0);
+	envtolist(cnf, env, 1);
 	inclvl(cnf);
 	cnf->env = cpyenv(cnf);
 }

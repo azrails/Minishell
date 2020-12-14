@@ -41,6 +41,7 @@ void		print_export(t_list *env_list)
 			write(1, "\n", 1);
 		env_list = env_list->next;
 	}
+	freelistenv(env_list);
 }
 
 t_list		*get_sorted_list(t_list *env_list)
@@ -111,13 +112,13 @@ int			ft_export(char **argv, t_config *cnf)
 				if (ft_strchr(*argv, '='))
 					key_value[1] = ft_strdup("\0");
 			}
+			preexp(key_value, cnf);
+			addtoenvl(cnf, key_value);
 			add_env(env_list, init_env(key_value));
 			free(key_value);
 			argv++;
 		}
 	}
-	free(cnf->env);
-	cnf->env = list_to_array(env_list);
-	free(env_list);
+	postex(env_list, cnf);
 	return (errno);
 }

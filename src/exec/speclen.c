@@ -86,7 +86,7 @@ static	int			lohic(char *s, t_config *cnf, int i, int *count)
 	return (i);
 }
 
-static	int			cocond(char *s, t_tmp *tmp,  int eq, int count)
+static	int			cocond(char *s, t_tmp *tmp, int eq, int count)
 {
 	if ((s[tmp->i] == '\'' || s[tmp->i] == '\"') && eq == 0 && tmp->st == 0)
 		count--;
@@ -94,36 +94,6 @@ static	int			cocond(char *s, t_tmp *tmp,  int eq, int count)
 		count--;
 	if (s[tmp->i] == '\"' && eq == 2 && tmp->st == 0)
 		count--;
-	return (count);
-}
-
-static	int		checslash(char *line, int i, t_tmp *tmp, int count)
-{
-	if (line[i] == '\\' && line[i + 1] && tmp->eq == 0 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
-	{
-		tmp->st = 1;
-		count--;
-	}
-	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 0 && ft_isalnum(line[i + 1]) && tmp->st == 0)
-	{
-		tmp->st = 0;
-		count--;
-	}
-	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 2 && !ft_isalnum(line[i + 1]) && tmp->st == 0)
-	{
-		tmp->st = 1;
-		count--;
-	}
-	else if (line[i] == '\\' && line[i + 1] && tmp->eq == 2 && ft_isalnum(line[i + 1]))
-		tmp->st = 0;
-	else if (line[i] == '\\' && !line[i + 1])
-		tmp->st = 0;
-	else if (line[i] == '\\' && tmp->st == 1 && tmp->eq == 0)
-		tmp->st = 0;
-	else if (line[i] == '\\' && tmp->st == 1 && tmp->eq == 2)
-		tmp->st = 0;
-	else if (line[i] != '\\' && tmp->st == 1)
-		tmp->st = 0;
 	return (count);
 }
 
@@ -144,7 +114,7 @@ int					specstrlen(char *s, t_config *cnf)
 			tmp.st == 1) || tmp.eq == 1)
 			count++;
 		else if ((s[tmp.i] == '$' && tmp.eq != 1 && tmp.st == 0))
-		{	
+		{
 			if ((tmp.i = lohic(s, cnf, tmp.i, &count)) == -1)
 				break ;
 		}

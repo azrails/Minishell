@@ -49,7 +49,7 @@ int				funcname(char *line, int i, t_tok *tok)
 		tmp.eq = checkqq(line, tmp.j, tmp.eq, &tmp);
 		if ((tmp.eq == 0 && issep(line[tmp.j]) && tmp.st == 0)
 			|| (tmp.eq == 0 && isredir(line[tmp.j]) && tmp.st == 0))
-			break;
+			break ;
 		endn++;
 		tmp.j++;
 	}

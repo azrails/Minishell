@@ -12,69 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static	int			cond(t_arg *arg, int i, int j, int eq)
-{
-	if ((i == 0 && arg->sarg[i] == '\\' && eq == 0) || (i != 0 &&
-		(arg->sarg[i] == '\\' && arg->sarg[i - 1] != '\\') && eq == 0))
-		j--;
-	if ((arg->sarg[i] == '\'' || arg->sarg[i] == '\"') && eq == 0)
-	{
-		if (i != 0 && arg->sarg[i - 1] != '\\')
-			j--;
-	}
-	if (arg->sarg[i] == '\'' && eq == 1)
-	{
-		if (i != 0 && arg->sarg[i - 1] != '\\')
-			j--;
-		if (i == 0)
-			j--;
-	}
-	if (arg->sarg[i] == '\"' && eq == 2)
-	{
-		if (i != 0 && arg->sarg[i - 1] != '\\')
-			j--;
-		if (i == 0)
-			j--;
-	}
-	return (j);
-}
-
-static	void		gts(t_tmp *tmp, t_config *cnf, char *ret)
-{
-	char	*ss;
-	int		k;
-
-	k = 0;
-	ss = ft_itoa(cnf->excode);
-	while (ss[k])
-	{
-		ret[tmp->j] = ss[k];
-		tmp->j++;
-		k++;
-	}
-	tmp->j--;
-	tmp->i++;
-	free(ss);
-}
-
-static	int			ccl(t_arg *arg, t_tmp *tmp, char *ret, t_config *cnf)
-{
-	if (arg->sarg[tmp->i + 1] && arg->sarg[tmp->i + 1] == '?')
-	{
-		gts(tmp, cnf, ret);
-	}
-	else
-	{
-		tmp->i++;
-		ptenv(arg->sarg, cnf->envl, tmp, ret);
-		if (arg->sarg[tmp->i] == '\0')
-			return (-1);
-		tmp->i--;
-	}
-	return (tmp->i);
-}
-
-static	int			initi(t_tmp *tmp, t_arg *arg, t_env *env, t_config *cnf)
+static	int			initi(t_tmp *tmp, t_arg *arg, t_config *cnf)
 {
 	int len;
 
@@ -86,11 +24,6 @@ static	int			initi(t_tmp *tmp, t_arg *arg, t_env *env, t_config *cnf)
 	len = specstrlen(arg->sarg, cnf);
 	return (len);
 }
-
-
-
-
-
 
 static	void		gtc(t_tmp *tmp, t_config *cnf, char *ret)
 {
@@ -128,9 +61,10 @@ static	int			ccg(t_arg *arg, t_tmp *tmp, char *ret, t_config *cnf)
 	return (tmp->i);
 }
 
-static	int			condiis(t_arg *arg, t_tmp *tmp,  int eq)
+static	int			condiis(t_arg *arg, t_tmp *tmp, int eq)
 {
-	if ((arg->sarg[tmp->i] == '\'' || arg->sarg[tmp->i] == '\"') && eq == 0 && tmp->st == 0)
+	if ((arg->sarg[tmp->i] == '\'' || arg->sarg[tmp->i] == '\"')
+		&& eq == 0 && tmp->st == 0)
 		tmp->j--;
 	if (arg->sarg[tmp->i] == '\'' && eq == 1)
 		tmp->j--;
@@ -138,13 +72,14 @@ static	int			condiis(t_arg *arg, t_tmp *tmp,  int eq)
 		tmp->j--;
 	return (tmp->j);
 }
-char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
+
+char				*getstr(t_arg *arg, t_config *cnf)
 {
 	char	*ret;
 	int		len;
 	t_tmp	tmp;
 
-	len = initi(&tmp, arg, env, cnf);
+	len = initi(&tmp, arg, cnf);
 	if (!(ret = malloc(sizeof(char) * len + 1)))
 		return (NULL);
 	while (arg->sarg[tmp.i])
@@ -155,19 +90,8 @@ char				*getstr(t_arg *arg, t_env *env, t_config *cnf)
 			ret[tmp.j] = arg->sarg[tmp.i];
 		if ((arg->sarg[tmp.i] == '$' && tmp.eq != 1 && tmp.st == 0))
 			tmp.i = ccg(arg, &tmp, ret, cnf);
-		tmp.j = condiis(arg, &tmp,  tmp.eq);
+		tmp.j = condiis(arg, &tmp, tmp.eq);
 		checkslh(arg->sarg, tmp.i, &tmp);
-		/*tmp.eq = checkq(arg->sarg, tmp.i, tmp.eq);
-		if (((arg->sarg[tmp.i] != '$') || (tmp.i != 0 && arg->sarg[tmp.i] == '$'
-			&& arg->sarg[tmp.i - 1] == '\\')) || tmp.eq == 1)
-			ret[tmp.j] = arg->sarg[tmp.i];
-		tmp.j = cond(arg, tmp.i, tmp.j, tmp.eq);
-		if ((arg->sarg[tmp.i] == '$' && tmp.eq == 2)
-			|| (arg->sarg[tmp.i] == '$' && tmp.eq == 0))
-		{
-			if ((tmp.i = ccl(arg, &tmp, ret, cnf)) == -1)
-				break ;
-		}*/
 		tmp.j++;
 		tmp.i++;
 	}

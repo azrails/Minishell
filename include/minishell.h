@@ -101,6 +101,7 @@ typedef	struct		s_config
 	char			**env;
 	t_pipe			pipe;
 	t_env			*envl;
+	t_env			*senvl;
 	t_tok			*tok;
 	t_env			*senv;
 }					t_config;
@@ -113,7 +114,7 @@ int					issep(char c);
 int					skipsep(t_tok *tok, char *line, int i);
 int					redir(char *line, int i, t_tok *tok);
 void				init(t_config *cnf, char **env);
-void				envtolist(t_config *cnf, char **env);
+void				envtolist(t_config *cnf, char **env, int type);
 int					isredir(char c);
 int					checkq(char *line, int i, int eq);
 int					getpth(t_rdir *tmp, char *line, int i);
@@ -135,13 +136,13 @@ char				*getname(t_config *cnf, t_tok *pnt);
 void				ptenv(char *str, t_env *env, t_tmp *tmp, char *s);
 int					specstrlen(char *s, t_config *cnf);
 char				*namefunc(t_config *cnf, t_tok *pnt, int len);
-char				*getstr(t_arg *arg, t_env *env, t_config *cnf);
-char				*gettruepth(char *str, t_env *env, t_config *cnf);
+char				*getstr(t_arg *arg, t_config *cnf);
+char				*gettruepth(char *str, t_config *cnf);
 int					pipedir(t_tok *pnt, t_config *cnf);
 void				exec(t_config *cnf);
 void				preex(t_config *cnf, t_tok *pnt);
 int					goexec(t_config *cnf, t_tok *pnt, char **targ);
-int					bin(char *p, char **targ, t_config *cnf, t_tok *pnt);
+int					bin(char *p, char **targ, t_config *cnf);
 t_tok				*gopipe(t_tok *pnt, t_config *cnf);
 void				intil(t_config *cnf, t_tok *pnt);
 int					inp(t_config *cnf, t_tok *pnt);
@@ -162,7 +163,7 @@ void				resfds(t_config *cnf);
 /*
 **BUILTINS
 */
-int					gobuiltin(t_config *cnf, t_tok *pnt, char **targ);
+int					gobuiltin(t_config *cnf, char **targ);
 int					isbuilt(char *name);
 int					ft_cd(char **argv, char **environ);
 int					ft_echo(char **argv);
@@ -175,15 +176,31 @@ t_list				*get_sorted_list(t_list *env_list);
 t_list				*list_from_environ(char **environ);
 void				add_env(t_list *env_list, t_env *env);
 t_env				*init_env(char **key_value);
-void				ft_signal(int signal);
+void				ft_signalc(int signal);
+void				ft_signals(int signal);
 char				**list_to_array(t_list *list);
 int					ft_strlen2(char **array);
+int					siseen(t_config *cnf);
+void				freed3(t_env *tenv, t_env *tenv2, int j, int remove);
+void				freed2(t_env *tenv, t_env *tenv2, t_config *cnf);
+void				freed(t_env *tenv, t_env *tenv2, int i, int j);
+int					siseenv(t_config *cnf);
+int					env_exist(char *argv, t_config *cnf);
+void				remove_env(char *argv, t_config *cnf);
+void				remove_env2(char *argv, t_config *cnf);
+void				freed22(t_env *tenv, t_env *tenv2, t_config *cnf);
+void				preexp(char **key_value, t_config *cnf);
+void				postex(t_list	*env_list, t_config *cnf);
+void				freelistenv(t_list *env_list);
+void				re_env2(char *argv, t_config *cnf);
 /*
 **TEST
 */
-int					checkqq(char *line, int i, int eq ,t_tmp *tmp);
+int					checkqq(char *line, int i, int eq, t_tmp *tmp);
 void				ccn(char *line, t_tmp *tmp, int i, int type);
 void				checkslh(char *line, int i, t_tmp *tmp);
-
+int					checslash(char *line, int i, t_tmp *tmp, int count);
+char				**cpyenv(t_config *cnf);
+void				addtoenvl(t_config *cnf, char **key_value);
 extern	t_sig	g_sig;
 #endif

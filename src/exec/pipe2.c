@@ -39,7 +39,7 @@ static	void	ons(t_config *cnf)
 	}
 }
 
-void	intil(t_config *cnf, t_tok *pnt)
+void			intil(t_config *cnf, t_tok *pnt)
 {
 	int i;
 

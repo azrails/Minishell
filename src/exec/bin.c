@@ -50,7 +50,7 @@ static	int			errs(char *p, char *func)
 	return (status);
 }
 
-int					bin(char *p, char **targ, t_config *cnf, t_tok *pnt)
+int					bin(char *p, char **targ, t_config *cnf)
 {
 	int status;
 
