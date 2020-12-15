@@ -41,6 +41,11 @@ static	int		chprs(char *line, t_config *cnf)
 		free(line);
 		return (1);
 	}
+	if (cherrdir(line, cnf))
+	{
+		free(line);
+		return (1);
+	}
 	if (checkunexp(cnf, line))
 	{
 		free(line);

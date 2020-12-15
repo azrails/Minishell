@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static	int		chckqte(char *line, int i, t_tmp *tmp, int type)
+int				chckqte(char *line, int i, t_tmp *tmp, int type)
 {
 	if ((line[i] == '\'' && type == 0 && tmp->st == 0))
 	{

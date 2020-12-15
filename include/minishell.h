@@ -125,6 +125,8 @@ int					funcname(char *line, int i, t_tok *tok);
 void				freeenvl(t_env *env);
 void				freetok(t_tok *tok);
 int					specstrlenn(char *s, t_env *env, t_config *cnf);
+int					cherrdir(char *line, t_config *cnf);
+int					chckqte(char *line, int i, t_tmp *tmp, int type);
 /*
 **EXIT
 */

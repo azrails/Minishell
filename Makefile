@@ -21,6 +21,7 @@ SRCS = src/parser/main.c \
 		src/parser/toks.c \
 		src/parser/toks2.c \
 		src/parser/tool.c \
+		src/parser/chredir.c \
 		src/parser/tool2.c \
 		src/parser/env.c \
 		src/parser/slh.c \
