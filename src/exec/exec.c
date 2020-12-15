@@ -70,7 +70,7 @@ void				preex(t_config *cnf, t_tok *pnt)
 	else if (targ && targ[0] && isbuilt(targ[0])
 		&& cnf->exit && cnf->err == 0)
 		gobuiltin(cnf, targ);
-	else if (targ[0] && cnf->exit && cnf->err == 0)
+	else if (targ && targ[0] && cnf->exit && cnf->err == 0)
 		cnf->excode = goexec(cnf, pnt, targ);
 	tf(targ);
 }
